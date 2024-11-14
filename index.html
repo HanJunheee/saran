@@ -5,31 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>サラン</title>
   <style>
+    /* 기본 스타일 */
     body {
       font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
-      padding: 20px;
+      padding: 10px;
       background-color: #f4f4f9;
     }
     .container {
-      width: 150%;
-      max-width: 7000px;
+      width: 100%;
+      max-width: 480px;
       background: white;
-      padding: 10px;
-      border-radius: 05px;
+      padding: 15px;
+      border-radius: 10px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    h2 {
-      font-size: 1.5em;
-      color: #333;
-      margin-bottom: 10px;
     }
     .total-amount {
       text-align: center;
       font-size: 1.2em;
       font-weight: bold;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       color: #333;
     }
     .log-box {
@@ -43,12 +39,13 @@
       font-size: 0.9em;
     }
     .search-bar {
-      margin-bottom: 20px;
-      text-align: center;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
     }
     .search-bar input {
-      width: 85%;
-      padding: 5px;
+      width: 90%;
+      padding: 8px;
       font-size: 1em;
       border: 1px solid #ddd;
       border-radius: 5px;
@@ -64,13 +61,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      cursor: pointer;
     }
-    
     .menu-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px;
+      padding: 8px 0;
       border-bottom: 1px solid #ddd;
     }
     .menu-item span {
@@ -93,6 +90,9 @@
     }
     .quantity-control button:hover {
       background-color: #ddd;
+    }
+    .hidden {
+      display: none;
     }
   </style>
 </head>
@@ -218,6 +218,7 @@
       { name: "기름 떡볶이（キルムトッポッキ)", price: 990 },
       { name: "불고기 떡볶이（プルゴギトッポッキ)", price: 1320 }
     ],
+    // 다른 카테고리 데이터 추가
   };
 
   window.onload = function() {
@@ -231,14 +232,17 @@
       categoryTitle.classList.add("category-title");
       categoryTitle.innerText = category;
 
-      // Toggle Button
+      // 토글 버튼 추가
       const toggleButton = document.createElement("button");
+      toggleButton.innerText = "↓";
+      toggleButton.onclick = () => toggleMenuItems(categoryDiv, toggleButton);
+
+      categoryTitle.appendChild(toggleButton);
       categoryDiv.appendChild(categoryTitle);
 
       menuData[category].forEach(item => {
         const menuItem = document.createElement("div");
         menuItem.classList.add("menu-item");
-        menuItem.setAttribute("data-name", item.name);
 
         const itemName = document.createElement("span");
         itemName.innerText = `${item.name} - ${item.price}円`;
@@ -262,7 +266,7 @@
         quantityControl.appendChild(decreaseButton);
         quantityControl.appendChild(quantityDisplay);
         quantityControl.appendChild(increaseButton);
-        
+
         menuItem.appendChild(quantityControl);
 
         const itemTotal = document.createElement("span");
@@ -270,6 +274,7 @@
         itemTotal.innerText = "0 円";
         menuItem.appendChild(itemTotal);
 
+        menuItem.classList.add("hidden"); // 기본적으로 숨김 처리
         categoryDiv.appendChild(menuItem);
       });
 
@@ -278,8 +283,9 @@
   };
 
   function toggleMenuItems(categoryDiv, button) {
-    const isHidden = categoryDiv.classList.toggle("hidden");
-    button.innerText = isHidden ? "↓" : "↑";
+    const menuItems = categoryDiv.querySelectorAll(".menu-item");
+    menuItems.forEach(item => item.classList.toggle("hidden"));
+    button.innerText = button.innerText === "↓" ? "↑" : "↓";
   }
 
   function updateQuantity(item, change, price, category) {
@@ -294,7 +300,6 @@
     totalElem.innerText = `${itemTotal.toLocaleString()} 円`;
 
     updateTotal();
-    updateLog(item, quantity, category);
   }
 
   function updateTotal() {
@@ -308,39 +313,12 @@
     document.getElementById("total-amount").innerText = `${total.toLocaleString()} 円`;
   }
 
-  function updateLog(item, quantity, category) {
-    const logBox = document.getElementById("logBox");
-    const existingLog = document.getElementById(`${item}-log`);
-
-    if (quantity > 0) {
-      if (existingLog) {
-        existingLog.querySelector(".log-quantity").innerText = ` : ${quantity}`;
-      } else {
-        const logEntry = document.createElement("div");
-        logEntry.id = `${item}-log`;
-        logEntry.innerHTML = `${item} <span class="log-quantity"> : ${quantity}</span>`;
-
-        if (category === "소프트 드링크") {
-          const inputField = document.createElement("input");
-          inputField.type = "text";
-          inputField.placeholder = "메뉴명 입력";
-          inputField.style.marginLeft = "5px";
-          logEntry.appendChild(inputField);
-        }
-
-        logBox.appendChild(logEntry);
-      }
-    } else if (existingLog) {
-      existingLog.remove();
-    }
-  }
-
   function searchMenu() {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
     const menuItems = document.querySelectorAll(".menu-item");
 
     menuItems.forEach(item => {
-      const itemName = item.getAttribute("data-name").toLowerCase();
+      const itemName = item.querySelector("span").innerText.toLowerCase();
       item.style.display = itemName.includes(searchValue) ? "" : "none";
     });
   }
