@@ -37,18 +37,18 @@
       max-height: 200px;
       overflow-y: auto;
       font-size: 0.9em;
+      position: relative;
     }
-    .search-bar {
-      margin-bottom: 15px;
-      display: flex;
-      justify-content: center;
-    }
-    .search-bar input {
-      width: 90%;
-      padding: 8px;
-      font-size: 1em;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+    .total-log-amount {
+      position: sticky;
+      bottom: 0;
+      right: 0;
+      padding: 5px;
+      font-weight: bold;
+      color: #333;
+      background-color: #f4f4f9;
+      text-align: right;
+      border-top: 1px solid #ddd;
     }
     .menu-category {
       margin-bottom: 20px;
@@ -91,6 +91,14 @@
     .quantity-control button:hover {
       background-color: #ddd;
     }
+    .soft-drink-input {
+      width: 70%;
+      padding: 5px;
+      margin-left: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 0.9em;
+    }
     .hidden {
       display: none;
     }
@@ -101,17 +109,13 @@
 <div class="container">
   <!-- 총합계 금액 -->
   <div class="total-amount">
-    총 합계: <span id="total-amount">0 円</span>
+    합계: <span id="total-amount">0 円</span>
   </div>
 
   <!-- 로그 박스 -->
   <div class="log-box" id="logBox">
     <!-- 선택된 메뉴 로그가 여기에 표시됩니다 -->
-  </div>
-
-  <!-- 검색창 -->
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="메뉴 검색..." onkeyup="searchMenu()">
+    <div class="total-log-amount" id="totalLogAmount">합계: 0 円</div>
   </div>
 
   <!-- 메뉴 항목들 -->
@@ -122,103 +126,102 @@
 
 <script>
   const menuData = {
-    "お通し": [
-      { name: "お通し(お一人様)", price: 200 }],
-    "주류": [
-      { name: "飲み放題(2시간)", price: 2530 },
-      { name: "生ビール", price: 660 },
-      { name: "소주（韓国焼酎）", price: 1320 },
-      { name: "병맥주（瓶ビール）", price: 770 },
-      { name: "논알콜맥주（ノンアルコールビール）", price: 660 },
-    ],
-    "막걸리류": [
-      { name: "막걸리 사이다（マッコリ　サイダ）", price: 610 },
-      { name: "막걸리 글라스（マッコリ　グラス）", price: 610 },
-      { name: "생막걸리（生マッコリ）", price: 1870 },
-      { name: "이동막걸리（EDon マッコリ）", price: 1980 },
-      { name: "꿀추가（蜂蜜追加）", price: 110 },
-    ],
-    "기타 주류": [
-      { name: "츄하이/하이볼（チューハイ/ハイボール）", price: 550 },
-      { name: "우메슈/니혼슈（梅酒/日本酒）", price: 550 },
-      { name: "고려인삼주（高麗人参酒）", price: 660 },
-    ],
-    "소프트 드링크": [
-      { name: "전메뉴（全メニュー）", price: 440 },
-    ],
-    "안주류": [
-      { name: "상추 샐러드（チシャサラダ)", price: 770 },
-      { name: "김치모듬（キムチ盛り合わせ) ", price: 1100 },
-      { name: "나물모듬（ナムル盛り合わせ)", price: 880 },
-      { name: "잡채（チャプチェ)", price: 1320 },
-      { name: "계란찜（ケランチム)", price: 880 },
-      { name: "오징어볶음（イカ炒め)", price: 1430 },
-    ],
-    "찌개류": [
-      { name: "오뎅탕（おでん鍋)", price: 1320 },
-      { name: "칼국수（カルグクス)", price: 1210 },
-      { name: "된장찌개（味噌チゲ)", price: 1320 },
-      { name: "참치 김치찌개（ツナキムチチゲ)", price: 1430 },
-      { name: "김치찌개（キムチチゲ)", price: 1540 },
-      { name: "순두부(해물/돼지고기)（スンドゥブ（海鮮・豚）)", price: 1320 },
-      { name: "설렁탕（ソルロンタン)", price: 1430 },
-      { name: "소고기국밥（ソゴギクッパ)", price: 1320 },
-      { name: "닭볶음탕（鳥炒め)", price: 1430 },
-      { name: "감자탕（カムジャタン)", price: 1980 },
-      { name: "삼계탕（サムゲタン)", price: 2750 },
-    ],
-    "밥류": [
-      { name: "야채비빔밥（野菜ビビンバ)", price: 1210 },
-      { name: "돌솥비빔밥（石焼ビビンバ)", price: 1210 },
-      { name: "오징어 돌솥비빔밥（イカ石焼ビビンバ)", price: 1430 },
-      { name: "공기밥（ご飯)", price: 250 },
-    ],
-    "면류": [
-      { name: "냉면（冷麺)", price: 1100 },
-      { name: "비빔국수（ビビン素麺)", price: 1210 },
-    ],
-    "김밥류": [
-      { name: "김밥（キンパブ)", price: 1210 },
-      { name: "불고기김밥（プルゴギキンパブ)", price: 1320 },
-      { name: "창자김밥（チャンジャ巻き)", price: 1210 },
-      { name: "매운치즈김밥（辛いチーズキンパブ)", price: 1320 },
-    ],
-    "전류": [
-      { name: "해물전（海鮮チヂミ)", price: 1430 },
-      { name: "김치전（キムチチヂミ)", price: 1320 },
-      { name: "김치 치즈전（キムチチーズチヂミ)", price: 1430 },
-      { name: "감자전（ジャガイモチヂミ)", price: 880 },
-      { name: "해물파전（へムルパジョン)", price: 1650 },
-    ],
-    "고기류(삼겹살)": [
-      { name: "삼겹살 디럭스코스(2인 이상)（サムギョップサルDXコース)", price: 4400 },
-      { name: "삼겹살 A코스(2인 이상)（サムギョップサルAコース)", price: 2970 },
-      { name: "삼겹살(2인 이상)（サムギョップサル)", price: 1650 },
-      { name: "고기추가（お肉追加)", price: 880 },
-      { name: "상추/마늘/청양고추 추가（サンチュ・ニンニク・青唐辛子)", price: 330 },
-    ],
-    "고기류(닭고기)": [
-      { name: "치즈 닭갈비（チーズタッカルビ)", price: 1540 },
-      { name: "치즈 추가（チーズ追加)", price: 330 },
-      { name: "닭강정（タッカンジョン)", price: 1650 },
-    ],
-    "고기류(기타)": [
-      { name: "LA갈비（LAカルビ)", price: 2200 },
-      { name: "족발（豚足)", price: 2200 },
-      { name: "제육볶음（辛い豚肉炒め)", price: 1320 },
-      { name: "오삼불고기（イカ炒めサムギョップサル)", price: 1650 },
-      { name: "순대（スンデ)", price: 1320 },
-      { name: "불고기（プルゴギ)", price: 1430 },
-    ],
-    "떡볶이류": [
-      { name: "떡볶이（トッポッキ)", price: 1100 },
-      { name: "치즈 떡볶이（チーズトッポッキ)", price: 1210 },
-      { name: "라볶이（ラポッキ)", price: 1210 },
-      { name: "치즈 라볶이（チーズラポッキ)", price: 1320 },
-      { name: "기름 떡볶이（キルムトッポッキ)", price: 990 },
-      { name: "불고기 떡볶이（プルゴギトッポッキ)", price: 1320 }
-    ],
-    // 다른 카테고리 데이터 추가
+"お通し": [
+{ name: "お通し(お一人様)", price: 200 }],
+"주류（お酒）": [
+{ name: "飲み放題(2시간)", price: 2530 },
+{ name: "生ビール", price: 660 },
+{ name: "소주（韓国焼酎）", price: 1320 },
+{ name: "병맥주（瓶ビール）", price: 770 },
+{ name: "논알콜맥주（ノンアルコールビール）", price: 660 },
+],
+"막걸리류（マッコリ）": [
+{ name: "막걸리 사이다（マッコリ　サイダ）", price: 610 },
+{ name: "막걸리 글라스（マッコリ　グラス）", price: 610 },
+{ name: "생막걸리（生マッコリ）", price: 1870 },
+{ name: "이동막걸리（EDon マッコリ）", price: 1980 },
+{ name: "꿀추가（蜂蜜追加）", price: 110 },
+],
+"기타 주류（他のお酒）": [
+{ name: "츄하이/하이볼（チューハイ/ハイボール）", price: 550 },
+{ name: "우메슈/니혼슈（梅酒/日本酒）", price: 550 },
+{ name: "고려인삼주（高麗人参酒）", price: 660 },
+],
+"소프트드링크（ソフトドリンク）": [
+{ name: "전메뉴（全メニュー）", price: 440 },
+],
+"안주류（おつまみ）": [
+{ name: "상추 샐러드（チシャサラダ)", price: 770 },
+{ name: "김치모듬（キムチ盛り合わせ) ", price: 1100 },
+{ name: "나물모듬（ナムル盛り合わせ)", price: 880 },
+{ name: "잡채（チャプチェ)", price: 1320 },
+{ name: "계란찜（ケランチム)", price: 880 },
+{ name: "오징어볶음（イカ炒め)", price: 1430 },
+],
+"찌개류（鍋、チゲ）": [
+{ name: "오뎅탕（おでん鍋)", price: 1320 },
+{ name: "칼국수（カルグクス)", price: 1210 },
+{ name: "된장찌개（味噌チゲ)", price: 1320 },
+{ name: "참치 김치찌개（ツナキムチチゲ)", price: 1430 },
+{ name: "김치찌개（キムチチゲ)", price: 1540 },
+{ name: "순두부(해물/돼지고기)（スンドゥブ（海鮮・豚）)", price: 1320 },
+{ name: "설렁탕（ソルロンタン)", price: 1430 },
+{ name: "소고기국밥（ソゴギクッパ)", price: 1320 },
+{ name: "닭볶음탕（鳥炒め)", price: 1430 },
+{ name: "감자탕（カムジャタン)", price: 1980 },
+{ name: "삼계탕（サムゲタン)", price: 2750 },
+],
+"비빔밥류（ビビンバ）": [
+{ name: "야채비빔밥（野菜ビビンバ)", price: 1210 },
+{ name: "돌솥비빔밥（石焼ビビンバ)", price: 1210 },
+{ name: "오징어 돌솥비빔밥（イカ石焼ビビンバ)", price: 1430 },
+{ name: "공기밥（ご飯)", price: 250 },
+],
+"면류（麺）": [
+{ name: "냉면（冷麺)", price: 1100 },
+{ name: "비빔국수（ビビン素麺)", price: 1210 },
+],
+"김밥류（キンパブ）": [
+{ name: "김밥（キンパブ)", price: 1210 },
+{ name: "불고기김밥（プルゴギキンパブ)", price: 1320 },
+{ name: "창자김밥（チャンジャ巻き)", price: 1210 },
+{ name: "매운치즈김밥（辛いチーズキンパブ)", price: 1320 },
+],
+"전류（チヂミ）": [
+{ name: "해물전（海鮮チヂミ)", price: 1430 },
+{ name: "김치전（キムチチヂミ)", price: 1320 },
+{ name: "김치 치즈전（キムチチーズチヂミ)", price: 1430 },
+{ name: "감자전（ジャガイモチヂミ)", price: 880 },
+{ name: "해물파전（へムルパジョン)", price: 1650 },
+],
+"고기류(삼겹살)（お肉：サムギョプサル）": [
+{ name: "삼겹살 디럭스코스(2인 이상)（サムギョップサルDXコース)", price: 4400 },
+{ name: "삼겹살 A코스(2인 이상)（サムギョップサルAコース)", price: 2970 },
+{ name: "삼겹살(2인 이상)（サムギョップサル)", price: 1650 },
+{ name: "고기추가（お肉追加)", price: 880 },
+{ name: "상추/마늘/청양고추 추가（サンチュ・ニンニク・青唐辛子)", price: 330 },
+],
+"고기류(닭고기)（お肉：鶏肉）": [
+{ name: "치즈 닭갈비（チーズタッカルビ)", price: 1540 },
+{ name: "치즈 추가（チーズ追加)", price: 330 },
+{ name: "닭강정（タッカンジョン)", price: 1650 },
+],
+"고기류(기타)（お肉：その他）": [
+{ name: "LA갈비（LAカルビ)", price: 2200 },
+{ name: "족발（豚足)", price: 2200 },
+{ name: "제육볶음（辛い豚肉炒め)", price: 1320 },
+{ name: "오삼불고기（イカ炒めサムギョップサル)", price: 1650 },
+{ name: "순대（スンデ)", price: 1320 },
+{ name: "불고기（プルゴギ)", price: 1430 },
+],
+"떡볶이류（トッポッキ）": [
+{ name: "떡볶이（トッポッキ)", price: 1100 },
+{ name: "치즈 떡볶이（チーズトッポッキ)", price: 1210 },
+{ name: "라볶이（ラポッキ)", price: 1210 },
+{ name: "치즈 라볶이（チーズラポッキ)", price: 1320 },
+{ name: "기름 떡볶이（キルムトッポッキ)", price: 990 },
+{ name: "불고기 떡볶이（プルゴギトッポッキ)", price: 1320 }
+],
   };
 
   window.onload = function() {
@@ -232,7 +235,6 @@
       categoryTitle.classList.add("category-title");
       categoryTitle.innerText = category;
 
-      // 토글 버튼 추가
       const toggleButton = document.createElement("button");
       toggleButton.innerText = "↓";
       toggleButton.onclick = () => toggleMenuItems(categoryDiv, toggleButton);
@@ -269,12 +271,16 @@
 
         menuItem.appendChild(quantityControl);
 
-        const itemTotal = document.createElement("span");
-        itemTotal.id = `${item.name}-total`;
-        itemTotal.innerText = "0 円";
-        menuItem.appendChild(itemTotal);
+        if (category === "소프트드링크（ソフトドリンク）" && item.name === "전메뉴（全メニュー）") {
+          const inputField = document.createElement("input");
+          inputField.type = "text";
+          inputField.placeholder = "메뉴 이름 입력";
+          inputField.className = "soft-drink-input";
+          inputField.id = `${item.name}-custom`;
+          menuItem.appendChild(inputField);
+        }
 
-        menuItem.classList.add("hidden"); // 기본적으로 숨김 처리
+        menuItem.classList.add("hidden");
         categoryDiv.appendChild(menuItem);
       });
 
@@ -290,16 +296,20 @@
 
   function updateQuantity(item, change, price, category) {
     const quantityElem = document.getElementById(`${item}-quantity`);
-    const totalElem = document.getElementById(`${item}-total`);
-
-    let quantity = parseInt(quantityElem.innerText) + change;
-    quantity = Math.max(quantity, 0);
+    const customInput = document.getElementById(`${item}-custom`);
+    const quantity = Math.max(parseInt(quantityElem.innerText) + change, 0);
     quantityElem.innerText = quantity;
 
-    const itemTotal = quantity * price;
-    totalElem.innerText = `${itemTotal.toLocaleString()} 円`;
-
     updateTotal();
+
+    if (change !== 0) {
+      const logBox = document.getElementById("logBox");
+      const logMessage = document.createElement("div");
+      const customText = customInput && customInput.value ? ` (${customInput.value})` : "";
+      logMessage.innerText = `▪️ ${item}${customText} 수량: ${quantity}개`;
+      logBox.appendChild(logMessage);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
   }
 
   function updateTotal() {
@@ -311,16 +321,7 @@
       });
     }
     document.getElementById("total-amount").innerText = `${total.toLocaleString()} 円`;
-  }
-
-  function searchMenu() {
-    const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    const menuItems = document.querySelectorAll(".menu-item");
-
-    menuItems.forEach(item => {
-      const itemName = item.querySelector("span").innerText.toLowerCase();
-      item.style.display = itemName.includes(searchValue) ? "" : "none";
-    });
+    document.getElementById("totalLogAmount").innerText = `합계: ${total.toLocaleString()} 円`;
   }
 </script>
 
