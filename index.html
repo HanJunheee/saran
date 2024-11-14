@@ -2,7 +2,6 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>サラン</title>
   <style>
@@ -305,10 +304,20 @@
 
     if (change !== 0) {
       const logBox = document.getElementById("logBox");
-      const logMessage = document.createElement("div");
+      let logItem = Array.from(logBox.children).find(
+        el => el.dataset.item === item && el.dataset.category === category
+      );
+
+      if (category === "소프트드링크（ソフトドリンク）" || !logItem) {
+        logItem = document.createElement("div");
+        logItem.dataset.item = item;
+        logItem.dataset.category = category;
+        logBox.appendChild(logItem);
+      }
+
       const customText = customInput && customInput.value ? ` (${customInput.value})` : "";
-      logMessage.innerText = `▪️ ${item}${customText} 수량: ${quantity}개`;
-      logBox.appendChild(logMessage);
+      logItem.innerText = `▪️ ${item}${customText} 수량: ${quantity}개`;
+
       logBox.scrollTop = logBox.scrollHeight;
     }
   }
