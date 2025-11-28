@@ -4,110 +4,184 @@
   <meta charset="UTF-8">
   <title>舍廊(サラン) 주문 관리</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <!-- 현대적인 웹 폰트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
   <style>
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      padding: 8px;
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-      "Noto Sans KR", sans-serif;
-      background: #f2f2f2;
+      padding: 12px 8px;
+      font-family: "Inter", "Noto Sans KR", -apple-system, BlinkMacSystemFont,
+      "Apple SD Gothic Neo", system-ui, sans-serif;
+      background: radial-gradient(circle at top, #e5e7eb 0, #d1d5db 35%, #9ca3af 100%);
       display: flex;
       justify-content: center;
+      color: #111827;
     }
 
     .app {
       width: 100%;
       max-width: 540px;
-      background: #ffffff;
-      padding: 10px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      background: #f9fafb;
+      padding: 14px 12px 12px 12px;
+      border-radius: 18px;
+      box-shadow:
+        0 18px 45px rgba(15, 23, 42, 0.25),
+        0 0 0 1px rgba(148, 163, 184, 0.4);
     }
 
     h1 {
       margin: 0 0 6px 0;
       font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: #0f172a;
     }
 
     .subtitle {
       font-size: 0.8rem;
-      color: #555;
-      margin-bottom: 8px;
-      line-height: 1.4;
+      color: #6b7280;
+      margin-bottom: 10px;
+      line-height: 1.5;
     }
 
     .top-row {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-bottom: 8px;
+      gap: 10px;
+      margin-bottom: 10px;
     }
 
     .panel {
-      padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      background: #fafafa;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
     }
 
     .panel-title {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       margin-bottom: 6px;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .panel-title::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ef4444, #fb923c);
     }
 
     /* 테이블 선택 */
     .table-list {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 6px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .table-btn {
-      padding: 7px 6px;
+      padding: 8px 6px;
       font-size: 0.8rem;
-      border-radius: 16px;
-      border: 1px solid #ccc;
-      background: #ffffff;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
       cursor: pointer;
       text-align: center;
+      color: #374151;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+    }
+
+    .table-btn span.badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #fee2e2;
+      color: #b91c1c;
     }
 
     .table-btn.active {
-      background: #d84343;
+      background: radial-gradient(circle at top left, #fb923c, #ef4444);
       color: #ffffff;
-      border-color: #d84343;
+      border-color: transparent;
+      box-shadow: 0 10px 18px rgba(239, 68, 68, 0.35);
+    }
+
+    .table-btn:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 6px 12px rgba(15, 23, 42, 0.18);
     }
 
     .small-btn {
-      padding: 4px 8px;
-      font-size: 0.75rem;
-      border-radius: 14px;
-      border: 1px solid #888;
-      background: #fff;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
       cursor: pointer;
+      color: #374151;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+      transition: background 0.15s ease, transform 0.05s ease, box-shadow 0.1s ease;
+    }
+
+    .small-btn::before {
+      content: "+";
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .small-btn:hover {
+      background: #e5e7eb;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.1);
+    }
+
+    .small-btn:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: none;
     }
 
     /* 합계 / 飲み放題 */
     .current-table-name {
-      font-size: 0.85rem;
-      margin-bottom: 4px;
+      font-size: 0.83rem;
+      margin-bottom: 5px;
+      color: #4b5563;
     }
 
     .total-amount {
-      font-size: 1.1rem;
-      font-weight: 700;
+      font-size: 1.15rem;
+      font-weight: 600;
       margin-bottom: 4px;
+      color: #111827;
     }
 
     .summary-list {
-      max-height: 210px;
+      max-height: 220px;
       overflow-y: auto;
-      margin-top: 4px;
-      padding-right: 2px;
+      margin-top: 6px;
+      padding-right: 4px;
+      border-radius: 10px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
     }
 
     .summary-item {
@@ -115,100 +189,144 @@
       justify-content: space-between;
       align-items: center;
       font-size: 0.78rem;
-      padding: 2px 0;
-      border-bottom: 1px solid #eee;
+      padding: 5px 8px;
+      border-bottom: 1px solid #eef0f3;
+    }
+
+    .summary-item:last-child {
+      border-bottom: none;
     }
 
     .summary-name {
       max-width: 58%;
+      color: #111827;
     }
 
     .summary-info {
       white-space: nowrap;
       margin-left: 4px;
+      color: #4b5563;
     }
 
     .delete-btn {
-      margin-left: 4px;
-      padding: 2px 6px;
-      font-size: 0.7rem;
-      border-radius: 10px;
-      border: 1px solid #c00;
-      background: #fff0f0;
-      color: #c00;
+      margin-left: 6px;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      border-radius: 999px;
+      border: 1px solid #fecaca;
+      background: #fef2f2;
+      color: #b91c1c;
       cursor: pointer;
+      transition: background 0.15s ease, transform 0.05s ease;
+    }
+
+    .delete-btn:hover {
+      background: #fee2e2;
+    }
+
+    .delete-btn:active {
+      transform: translateY(1px) scale(0.98);
     }
 
     .reset-btn {
-      margin-top: 4px;
-      padding: 5px 8px;
+      margin-top: 6px;
+      padding: 6px 10px;
       font-size: 0.8rem;
-      border-radius: 14px;
-      border: 1px solid #777;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
       background: #ffffff;
       cursor: pointer;
+      color: #374151;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.15s ease, box-shadow 0.1s ease, transform 0.05s ease;
+    }
+
+    .reset-btn::before {
+      content: "↺";
+      font-size: 0.82rem;
+    }
+
+    .reset-btn:hover {
+      background: #f3f4f6;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+    }
+
+    .reset-btn:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: none;
     }
 
     .nomihodai-info {
-      margin-top: 6px;
-      padding: 6px;
-      background: #fff8e1;
-      border-radius: 6px;
-      border: 1px solid #f0d27a;
-      font-size: 0.75rem;
-      line-height: 1.4;
+      margin-top: 8px;
+      padding: 7px 8px;
+      background: #fffbeb;
+      border-radius: 10px;
+      border: 1px solid #facc15;
+      font-size: 0.76rem;
+      line-height: 1.5;
+      color: #78350f;
+    }
+
+    .nomihodai-info strong {
+      font-weight: 600;
     }
 
     .nomihodai-memo {
       width: 100%;
-      margin-top: 4px;
-      font-size: 0.75rem;
-      padding: 4px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
+      margin-top: 5px;
+      font-size: 0.76rem;
+      padding: 6px 7px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
       resize: vertical;
-      min-height: 40px;
+      min-height: 44px;
+      font-family: inherit;
+      background: #fffef5;
     }
 
     /* 메뉴 패널 */
     .menu-panel {
       margin-top: 8px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
       padding: 8px;
       background: #ffffff;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
     }
 
     .menu-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: baseline;
       margin-bottom: 6px;
     }
 
     .menu-header-title {
       font-size: 0.9rem;
       font-weight: 600;
+      color: #111827;
     }
 
     .menu-note {
       font-size: 0.72rem;
-      color: #777;
+      color: #6b7280;
     }
 
     .category {
-      border-radius: 6px;
-      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
       margin-bottom: 6px;
       overflow: hidden;
-      background: #fff;
+      background: #f9fafb;
     }
 
     .category-header {
       width: 100%;
       text-align: left;
-      padding: 6px 8px;
-      background: #f5f5f5;
+      padding: 7px 9px;
+      background: linear-gradient(135deg, #f9fafb, #e5e7eb);
       border: none;
       cursor: pointer;
       font-size: 0.8rem;
@@ -216,6 +334,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      color: #111827;
     }
 
     .category-header span {
@@ -226,20 +345,25 @@
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.3s ease;
-      border-top: 1px solid #eee;
+      border-top: 1px solid #e5e7eb;
+      background: #ffffff;
     }
 
     .category-body.open {
-      max-height: 1200px; /* 넉넉하게 */
+      max-height: 1200px;
     }
 
     .menu-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 8px;
-      border-bottom: 1px solid #f0f0f0;
+      padding: 6px 9px;
+      border-bottom: 1px solid #f3f4f6;
       font-size: 0.78rem;
+    }
+
+    .menu-item:last-child {
+      border-bottom: none;
     }
 
     .menu-left {
@@ -249,11 +373,13 @@
 
     .menu-name {
       font-weight: 500;
+      color: #111827;
     }
 
     .menu-price {
-      color: #777;
+      color: #6b7280;
       font-size: 0.72rem;
+      margin-top: 1px;
     }
 
     .menu-right {
@@ -263,20 +389,36 @@
     }
 
     .qty-display {
-      min-width: 20px;
+      min-width: 22px;
       text-align: center;
       font-size: 0.78rem;
+      color: #111827;
     }
 
     .qty-btn {
-      width: 26px;
-      height: 26px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      background: #f8f8f8;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
       cursor: pointer;
       font-size: 1rem;
       line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #374151;
+      transition: background 0.12s ease, transform 0.05s ease, box-shadow 0.1s ease;
+    }
+
+    .qty-btn:hover {
+      background: #e5e7eb;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08);
+    }
+
+    .qty-btn:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: none;
     }
 
     .soft-row {
@@ -295,29 +437,51 @@
     .soft-input-row input,
     .custom-input-row input {
       flex: 1;
-      padding: 4px;
+      padding: 5px 6px;
       font-size: 0.76rem;
-      border-radius: 4px;
-      border: 1px solid #ccc;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      font-family: inherit;
     }
 
     .soft-input-row button,
     .custom-input-row button {
-      padding: 4px 8px;
+      padding: 5px 8px;
       font-size: 0.74rem;
-      border-radius: 4px;
-      border: 1px solid #888;
-      background: #eee;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: #eef2ff;
       cursor: pointer;
       white-space: nowrap;
+      color: #1d4ed8;
+      font-weight: 500;
+      transition: background 0.12s ease, transform 0.05s ease, box-shadow 0.1s ease;
+    }
+
+    .soft-input-row button:hover,
+    .custom-input-row button:hover {
+      background: #e0e7ff;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.1);
+    }
+
+    .soft-input-row button:active,
+    .custom-input-row button:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: none;
     }
 
     .custom-label {
       font-size: 0.72rem;
-      color: #555;
+      color: #6b7280;
       margin-top: 3px;
     }
 
+    @media (max-width: 400px) {
+      .table-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
   </style>
 </head>
 <body>
@@ -325,7 +489,7 @@
   <h1>舍廊(サラン) 주문 관리</h1>
   <div class="subtitle">
     테이블 선택 → 메뉴 입력 → 테이블별 합계 / 飲み放題 시간 관리.<br>
-    새로고침해도 데이터가 유지됩니다.
+    브라우저를 새로고침해도 데이터가 유지됩니다.
   </div>
 
   <div class="top-row">
@@ -488,29 +652,46 @@
    *************************************************************/
   const STORAGE_KEY = "sarangOrderStateV1";
 
-  const itemsIndex = {}; // itemId -> itemData
-  let tablesState = {};  // tableId -> { displayName, orders, nomihodaiStart, nomihodaiMemo }
+  const itemsIndex = {};
+  let tablesState = {};
   let currentTableId = null;
   let counterIndex = 1;
 
   function initDefaultTables() {
-    const baseTables = [
-      { id: "1f-counter-1", name: "1F 카운터석 #1" },
-      { id: "1f-table-1", name: "1F 테이블 1번" },
-      { id: "1f-table-2", name: "1F 테이블 2번" },
-      { id: "2f-table-1", name: "2F 테이블 1번" },
-      { id: "2f-table-2", name: "2F 테이블 2번" }
-    ];
-    tablesState = {};
-    baseTables.forEach(t => {
-      tablesState[t.id] = {
-        displayName: t.name,
+    // 기본 테이블: 1F/2F 먼저, 카운터는 맨 끝에 하나
+    tablesState = {
+      "1f-table-1": {
+        displayName: "1F 테이블 1번",
         orders: {},
         nomihodaiStart: null,
         nomihodaiMemo: ""
-      };
-    });
-    currentTableId = "1f-counter-1";
+      },
+      "1f-table-2": {
+        displayName: "1F 테이블 2번",
+        orders: {},
+        nomihodaiStart: null,
+        nomihodaiMemo: ""
+      },
+      "2f-table-1": {
+        displayName: "2F 테이블 1번",
+        orders: {},
+        nomihodaiStart: null,
+        nomihodaiMemo: ""
+      },
+      "2f-table-2": {
+        displayName: "2F 테이블 2번",
+        orders: {},
+        nomihodaiStart: null,
+        nomihodaiMemo: ""
+      },
+      "1f-counter-1": {
+        displayName: "1F 카운터석 #1",
+        orders: {},
+        nomihodaiStart: null,
+        nomihodaiMemo: ""
+      }
+    };
+    currentTableId = "1f-table-1";
     counterIndex = 1;
   }
 
@@ -535,9 +716,7 @@
         counterIndex
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (e) {
-      // 저장 실패는 조용히 무시
-    }
+    } catch (e) {}
   }
 
   function loadAppState() {
@@ -578,8 +757,8 @@
    * 초기화
    *************************************************************/
   function init() {
-    initMenu();       // 메뉴 / itemsIndex
-    loadAppState();   // 저장된 테이블 상태 로드 or 기본값
+    initMenu();
+    loadAppState();
     renderTables();
     updateCurrentTableView();
   }
@@ -590,10 +769,32 @@
   function renderTables() {
     const tableList = document.getElementById("tableList");
     tableList.innerHTML = "";
-    Object.entries(tablesState).forEach(([id, t]) => {
+
+    // 1F/2F 테이블 먼저, 그다음 카운터석
+    const entries = Object.entries(tablesState);
+    const normal = [];
+    const counters = [];
+
+    entries.forEach(([id, t]) => {
+      if (id.includes("counter")) counters.push([id, t]);
+      else normal.push([id, t]);
+    });
+
+    const ordered = normal.concat(counters);
+
+    ordered.forEach(([id, t]) => {
       const btn = document.createElement("button");
       btn.className = "table-btn" + (id === currentTableId ? " active" : "");
       btn.textContent = t.displayName;
+
+      // 카운터는 배지 표시
+      if (id.includes("counter")) {
+        const span = document.createElement("span");
+        span.className = "badge";
+        span.textContent = "COUNTER";
+        btn.appendChild(span);
+      }
+
       btn.onclick = () => selectTable(id);
       tableList.appendChild(btn);
     });
@@ -652,15 +853,12 @@
 
       headerBtn.onclick = () => toggleCategoryBody(bodyDiv, arrowSpan);
 
-      // 메뉴 아이템 생성
       items.forEach(item => {
-        // itemsIndex에 등록 (id 중복 가능하지만 같은 메뉴로 취급)
         if (!itemsIndex[item.id]) {
           itemsIndex[item.id] = { ...item, category: categoryName };
         }
 
         if (item.type === "soft") {
-          // 소프트드링크 전메뉴
           const row = document.createElement("div");
           row.className = "menu-item soft-row";
 
@@ -759,7 +957,7 @@
 
       const descInput = document.createElement("input");
       descInput.type = "text";
-      descInput.placeholder = "설명 (예: 서비스, 추가요금 등)";
+      descInput.placeholder = "설명 (예: 서비스,追加料金 등)";
 
       const amountInput = document.createElement("input");
       amountInput.type = "number";
@@ -804,7 +1002,7 @@
     const item = itemsIndex[itemId];
     if (!item) return;
 
-    const orderKey = itemId; // 일반 메뉴는 itemId 단위로 하나씩 관리
+    const orderKey = itemId;
     const existing = table.orders[orderKey] || {
       itemId,
       name: item.name,
@@ -822,7 +1020,6 @@
       table.orders[orderKey] = existing;
     }
 
-    // 飲み放題 시간 처리
     if (item.isNomihodai) {
       if (existing.qty > 0 && !table.nomihodaiStart) {
         table.nomihodaiStart = new Date();
@@ -869,7 +1066,7 @@
   }
 
   /*************************************************************
-   * 주문 조작: 카테고리별 임의 금액
+   * 주문 조작: 임의 금액
    *************************************************************/
   function addCustomItem(categoryName, descInput, amountInput) {
     const table = getCurrentTableState();
@@ -883,10 +1080,7 @@
       return;
     }
 
-    const label = desc
-      ? `${desc}`
-      : `${categoryName} 임의 항목`;
-
+    const label = desc ? desc : `${categoryName} 임의 항목`;
     const orderKey = `custom::${Date.now()}::${Math.random().toString(36).slice(2,7)}`;
 
     table.orders[orderKey] = {
@@ -905,7 +1099,7 @@
   }
 
   /*************************************************************
-   * 화면 갱신 / 합계 / 飲み放題 표시
+   * 화면 갱신 / 합계 / 飲み放題
    *************************************************************/
   function updateCurrentTableView() {
     const table = getCurrentTableState();
@@ -916,7 +1110,6 @@
     const nomihodaiTimes = document.getElementById("nomihodaiTimes");
     const nomihodaiMemo = document.getElementById("nomihodaiMemo");
 
-    // 모든 수량표시 0으로 초기화
     document.querySelectorAll("[data-qty-for]").forEach(span => {
       span.textContent = "0";
     });
@@ -938,7 +1131,6 @@
       const lineTotal = order.price * order.qty;
       total += lineTotal;
 
-      // 일반 메뉴 수량 업데이트 (soft/custom 제외)
       if (!order.softName && order.itemId !== "custom") {
         document.querySelectorAll(`[data-qty-for="${order.itemId}"]`)
           .forEach(span => span.textContent = String(order.qty));
@@ -968,7 +1160,6 @@
 
     totalAmountEl.textContent = `합계: ${total.toLocaleString()} 円`;
 
-    // 飲み放題 표시
     if (table.nomihodaiStart) {
       nomihodaiInfo.style.display = "block";
       const start = table.nomihodaiStart;
