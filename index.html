@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>舍廊(サラン) 注文レシート/title>
+  <title>舍廊(サラン) 주문 관리</title>
   <!-- 확대/축소 방지: user-scalable=no / maximum-scale=1.0 -->
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -506,8 +506,10 @@
 </head>
 <body>
 <div class="app">
-  <h1>舍廊(サラン) 注文レシート</h1>
+  <h1>舍廊(サラン) 주문 관리</h1>
   <div class="subtitle">
+    테이블 선택 → 메뉴 입력 → 테이블별 合計 / 飲み放題 시간 관리.<br>
+    브라우저를 새로고침해도 데이터가 유지됩니다.
   </div>
 
   <div class="top-row">
@@ -516,24 +518,24 @@
       <div class="panel-title">테이블 선택 / 카운터 관리</div>
       <div class="table-list" id="tableList"></div>
       <div>
-        <button class="small-btn" onclick="addCounterGroup()">カウンターグループ追加</button>
-        <button class="small-btn small-btn-reset" onclick="resetAllCounters()">カウンターリセット</button>
+        <button class="small-btn" onclick="addCounterGroup()">카운터 그룹 追加</button>
+        <button class="small-btn small-btn-reset" onclick="resetAllCounters()">카운터 전체 초기화</button>
       </div>
     </div>
 
     <!-- 합계 / 飲み放題 -->
     <div class="panel">
-      <div class="panel-title">現在テーブル / 合計</div>
+      <div class="panel-title">현재 테이블 / 合計</div>
       <div class="current-table-name" id="currentTableName">선택된 테이블 없음</div>
       <div class="total-amount" id="totalAmount">合計: 0 円</div>
-      <button class="reset-btn" onclick="resetCurrentTable()">リセット</button>
+      <button class="reset-btn" onclick="resetCurrentTable()">현재 테이블 주문 초기화</button>
 
       <div class="summary-list" id="summaryList">
         <!-- 주문 요약 -->
       </div>
 
       <div class="nomihodai-info" id="nomihodaiInfo" style="display:none;">
-        <div><strong>飲み放題(2時間)</strong></div>
+        <div><strong>飲み放題(2시간) 정보</strong></div>
         <div id="nomihodaiTimes"></div>
         <textarea
           id="nomihodaiMemo"
@@ -562,7 +564,7 @@
     "お通し": [
       { id: "otoshi", name: "お通し(お一人様)", price: 200 }
     ],
-    "注文が多いメニュー": [
+    "많이 주문하는 메뉴": [
       { id: "nama-beer", name: "生ビール", price: 660 },
       { id: "seafood-jeon", name: "해물전（海鮮チヂミ)", price: 1430 },
       { id: "cheese-tteokbokki", name: "치즈 떡볶이（チーズトッポッキ)", price: 1210 },
@@ -705,7 +707,7 @@
         nomihodaiMemo: ""
       },
       "1f-counter-1": {
-        displayName: "1F 카운터석 #1",
+        displayName: "1F カウンター席 #1",
         orders: {},
         nomihodaiStart: null,
         nomihodaiMemo: ""
@@ -854,13 +856,13 @@
     }
 
     if (slot === null) {
-      alert("카운터석은 최대 4개까지 생성할 수 있습니다.");
+      alert("カウンター席은 최대 4개까지 생성할 수 있습니다.");
       return;
     }
 
     const id = `1f-counter-${slot}`;
     tablesState[id] = {
-      displayName: `1F 카운터석 #${slot}`,
+      displayName: `1F カウンター席 #${slot}`,
       orders: {},
       nomihodaiStart: null,
       nomihodaiMemo: ""
@@ -882,7 +884,7 @@
     }
 
     if (Object.keys(table.orders || {}).length > 0) {
-      const ok = confirm("이 카운터석의 주문이 모두 삭제됩니다. 계속하시겠습니까?");
+      const ok = confirm("이 カウンター席의 주문이 모두 삭제됩니다. 계속하시겠습니까?");
       if (!ok) return;
     }
 
@@ -908,7 +910,7 @@
 
     // 카운터 #1 다시 생성
     tablesState["1f-counter-1"] = {
-      displayName: "1F 카운터석 #1",
+      displayName: "1F カウンター席 #1",
       orders: {},
       nomihodaiStart: null,
       nomihodaiMemo: ""
@@ -942,7 +944,7 @@
 
     entries.forEach(([categoryName, items]) => {
       // お通し 다음, 많이 주문하는 메뉴 앞에 "임의 금액" 섹션 삽입
-      if (categoryName === "注文が多いメニュー") {
+      if (categoryName === "많이 주문하는 메뉴") {
         const customSection = createGlobalCustomSection();
         menuContainer.appendChild(customSection);
       }
@@ -997,7 +999,7 @@
           input.placeholder = "예) 콜라, 사이다, 오렌지주스";
 
           const btn = document.createElement("button");
-          btn.textContent = "추가";
+          btn.textContent = "追加";
           btn.onclick = () => addSoftDrink(item.id, input);
 
           softRow.appendChild(input);
@@ -1068,7 +1070,7 @@
     header.style.cursor = "default";
 
     const title = document.createElement("span");
-    title.textContent = "메뉴에 없는 금액 / 설명 추가";
+    title.textContent = "메뉴에 없는 금액 / 설명 追加";
     const empty = document.createElement("span");
     empty.textContent = ""; // 화살표 대신 빈칸
 
@@ -1087,7 +1089,7 @@
 
     const clabel = document.createElement("div");
     clabel.className = "custom-label";
-    clabel.textContent = "메뉴에 없는 금액이나 설명을 직접 입력하여 추가합니다.";
+    clabel.textContent = "메뉴에 없는 금액이나 설명을 직접 입력하여 追加합니다.";
 
     leftCustom.appendChild(clabel);
 
@@ -1096,11 +1098,11 @@
 
     const descInput = document.createElement("input");
     descInput.type = "text";
-    descInput.placeholder = "설명";
+    descInput.placeholder = "설명 (예: 서비스,追加料金 등)";
 
     const amountInput = document.createElement("input");
     amountInput.type = "number";
-    amountInput.placeholder = "金額 (円)";
+    amountInput.placeholder = "금액 (円)";
     amountInput.inputMode = "numeric";
 
     const addBtn = document.createElement("button");
@@ -1253,7 +1255,7 @@
 
     if (!table) {
       currentTableName.textContent = "선택된 테이블 없음";
-      totalAmountEl.textContent = "합계: 0 円";
+      totalAmountEl.textContent = "合計: 0 円";
       summaryList.innerHTML = "";
       nomihodaiInfo.style.display = "none";
       return;
@@ -1286,7 +1288,7 @@
 
       const delBtn = document.createElement("button");
       delBtn.className = "delete-btn";
-      delBtn.textContent = "삭제";
+      delBtn.textContent = "削除";
       delBtn.onclick = () => deleteOrder(orderKey);
 
       row.appendChild(nameSpan);
