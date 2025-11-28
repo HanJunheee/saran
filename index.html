@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>舍廊(サラン) 注文管理</title>
-  <!-- 拡大/縮小防止: user-scalable=no / maximum-scale=1.0 -->
+  <!-- 拡大/縮小防止 -->
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
@@ -20,7 +20,9 @@
     html, body {
       margin: 0;
       padding: 0;
-      touch-action: manipulation; /* ダブルタップのジェスチャーを最小化 */
+      touch-action: pan-y;      /* 세로 스크롤만 허용 */
+      overflow-x: hidden;       /* 좌우 스크롤 막기 */
+      width: 100%;
     }
 
     body {
@@ -44,6 +46,7 @@
       box-shadow:
         0 18px 45px rgba(15, 23, 42, 0.25),
         0 0 0 1px rgba(148, 163, 184, 0.4);
+      margin: 0 auto;
     }
 
     h1 {
@@ -111,6 +114,7 @@
       transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
       position: relative;
       padding-right: 22px; /* 右側の × 用スペース */
+      max-width: 100%;
     }
 
     .table-btn.active {
@@ -156,6 +160,7 @@
       margin-top: 4px;
       margin-right: 4px;
       transition: background 0.15s ease, transform 0.05s ease, box-shadow 0.1s ease;
+      max-width: 100%;
     }
 
     .small-btn::before {
@@ -259,6 +264,7 @@
       align-items: center;
       gap: 4px;
       transition: background 0.15s ease, box-shadow 0.1s ease, transform 0.05s ease;
+      max-width: 100%;
     }
 
     .reset-btn::before {
@@ -519,9 +525,7 @@
       <div class="total-amount" id="totalAmount">合計: 0 円</div>
       <button class="reset-btn" onclick="resetCurrentTable()">現在のテーブルの注文をリセット</button>
 
-      <div class="summary-list" id="summaryList">
-        <!-- 注文サマリー -->
-      </div>
+      <div class="summary-list" id="summaryList"></div>
 
       <div class="nomihodai-info" id="nomihodaiInfo" style="display:none;">
         <div><strong>飲み放題(2時間)情報</strong></div>
@@ -553,7 +557,7 @@
     "お通し": [
       { id: "otoshi", name: "お通し(お一人様)", price: 200 }
     ],
-    "注文が多いメニュー": [
+    "많이 주문하는 메뉴": [
       { id: "nama-beer", name: "生ビール", price: 660 },
       { id: "seafood-jeon", name: "해물전（海鮮チヂミ)", price: 1430 },
       { id: "cheese-tteokbokki", name: "치즈 떡볶이（チーズトッポッキ)", price: 1210 },
@@ -669,7 +673,6 @@
   let counterIndex = 1;
 
   function initDefaultTables() {
-    // デフォルトテーブル: 1F/2F が先、カウンターは最後
     tablesState = {
       "1f-table-1": {
         displayName: "1F テーブル 1番",
@@ -764,9 +767,6 @@
     }
   }
 
-  /*************************************************************
-   * 初期化
-   *************************************************************/
   function init() {
     initMenu();
     loadAppState();
@@ -781,7 +781,6 @@
     const tableList = document.getElementById("tableList");
     tableList.innerHTML = "";
 
-    // 1F/2F テーブル → カウンター席 の順で表示
     const entries = Object.entries(tablesState);
     const normal = [];
     const counters = [];
@@ -801,7 +800,6 @@
       label.textContent = t.displayName;
       btn.appendChild(label);
 
-      // カウンター席には削除ボタンを追加
       if (id.includes("counter")) {
         const close = document.createElement("span");
         close.className = "table-close";
@@ -829,7 +827,6 @@
   function addCounterGroup() {
     const maxCounters = 4;
 
-    // 使用中のカウンター番号を取得
     const used = new Set(
       Object.keys(tablesState)
         .filter(id => id.startsWith("1f-counter-"))
@@ -890,14 +887,12 @@
   }
 
   function resetAllCounters() {
-    // カウンター席を全部削除
     Object.keys(tablesState).forEach(id => {
       if (id.includes("counter")) {
         delete tablesState[id];
       }
     });
 
-    // カウンター #1 を再作成
     tablesState["1f-counter-1"] = {
       displayName: "1F カウンター席 #1",
       orders: {},
@@ -906,7 +901,6 @@
     };
     counterIndex = 1;
 
-    // 現在テーブルが消えた場合、1F テーブル1 または カウンター1 に移動
     if (!tablesState[currentTableId]) {
       if (tablesState["1f-table-1"]) currentTableId = "1f-table-1";
       else currentTableId = "1f-counter-1";
@@ -932,8 +926,7 @@
     const entries = Object.entries(menuData);
 
     entries.forEach(([categoryName, items]) => {
-      // お通し の次、 많이 주문하는 메뉴 の前に「任意金額」セクションを挿入
-      if (categoryName === "注文が多いメニュー") {
+      if (categoryName === "많이 주문하는 메뉴") {
         const customSection = createGlobalCustomSection();
         menuContainer.appendChild(customSection);
       }
@@ -1049,7 +1042,6 @@
     });
   }
 
-  // お通し と 많이 주문하는 메뉴 の間に表示される「任意金額」セクション
   function createGlobalCustomSection() {
     const wrapper = document.createElement("div");
     wrapper.className = "category";
@@ -1068,7 +1060,7 @@
     wrapper.appendChild(header);
 
     const body = document.createElement("div");
-    body.className = "category-body open"; // 常に開いた状態
+    body.className = "category-body open";
 
     const customRow = document.createElement("div");
     customRow.className = "menu-item soft-row";
@@ -1344,12 +1336,10 @@
   /*************************************************************
    * 拡大/縮小防止用イベント
    *************************************************************/
-  // ダブルタップ拡大防止
   document.addEventListener('dblclick', function (e) {
     e.preventDefault();
   }, { passive: false });
 
-  // iOS Safari ジェスチャー拡大防止
   window.addEventListener('gesturestart', function (e) {
     e.preventDefault();
   }, { passive: false });
