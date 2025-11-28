@@ -553,7 +553,7 @@
     "お通し": [
       { id: "otoshi", name: "お通し(お一人様)", price: 200 }
     ],
-    "많이 주문하는 메뉴": [
+    "注文が多いメニュー": [
       { id: "nama-beer", name: "生ビール", price: 660 },
       { id: "seafood-jeon", name: "해물전（海鮮チヂミ)", price: 1430 },
       { id: "cheese-tteokbokki", name: "치즈 떡볶이（チーズトッポッキ)", price: 1210 },
@@ -933,7 +933,7 @@
 
     entries.forEach(([categoryName, items]) => {
       // お通し の次、 많이 주문하는 메뉴 の前に「任意金額」セクションを挿入
-      if (categoryName === "많이 주문하는 메뉴") {
+      if (categoryName === "注文が多いメニュー") {
         const customSection = createGlobalCustomSection();
         menuContainer.appendChild(customSection);
       }
