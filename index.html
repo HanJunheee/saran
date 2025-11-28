@@ -2,9 +2,9 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>舍廊(サラン) 주문 관리</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-
+  <title>舍廊(サラン) 注文レシート</title>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <!-- 현대적인 웹 폰트 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -93,7 +93,7 @@
       margin-bottom: 8px;
     }
 
-    .table-btn {
+    .    .table-btn {
       padding: 8px 6px;
       font-size: 0.8rem;
       border-radius: 999px;
@@ -107,6 +107,23 @@
       justify-content: center;
       gap: 4px;
       transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+      position: relative; /* ★ 추가: X 아이콘을 버튼 안에 배치하기 위해 필요 */
+      padding-right: 22px; /* ★ 오른쪽에 X가 들어갈 여유 */
+    }
+
+    .table-close {
+      position: absolute;
+      top: 3px;
+      right: 6px;
+      font-size: 0.72rem;
+      color: #9ca3af;
+      cursor: pointer;
+      padding: 2px;
+      line-height: 1;
+    }
+
+    .table-close:hover {
+      color: #f97316; /* 주황빛 강조 */
     }
 
     .table-btn span.badge {
@@ -766,7 +783,7 @@
   /*************************************************************
    * 테이블 관리
    *************************************************************/
-  function renderTables() {
+    function renderTables() {
     const tableList = document.getElementById("tableList");
     tableList.innerHTML = "";
 
@@ -785,14 +802,28 @@
     ordered.forEach(([id, t]) => {
       const btn = document.createElement("button");
       btn.className = "table-btn" + (id === currentTableId ? " active" : "");
-      btn.textContent = t.displayName;
 
-      // 카운터는 배지 표시
+      // 라벨
+      const label = document.createElement("span");
+      label.textContent = t.displayName;
+      btn.appendChild(label);
+
+      // 카운터는 COUNTER 배지 + X 삭제 버튼
       if (id.includes("counter")) {
-        const span = document.createElement("span");
-        span.className = "badge";
-        span.textContent = "COUNTER";
-        btn.appendChild(span);
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = "COUNTER";
+        btn.appendChild(badge);
+
+        // ★ X 버튼 생성
+        const close = document.createElement("span");
+        close.className = "table-close";
+        close.textContent = "×";
+        close.onclick = (e) => {
+          e.stopPropagation();      // 테이블 선택 클릭과 충돌 방지
+          deleteCounterTable(id);   // 아래에서 정의할 함수
+        };
+        btn.appendChild(close);
       }
 
       btn.onclick = () => selectTable(id);
@@ -818,6 +849,39 @@
       nomihodaiMemo: ""
     };
     renderTables();
+    saveAppState();
+  }
+
+    function deleteCounterTable(id) {
+    // 카운터가 아니면 삭제 금지 (실수 방지용)
+    if (!id.includes("counter")) return;
+
+    const table = tablesState[id];
+    if (!table) return;
+
+    // 최소 1개 이상 테이블은 남기기
+    if (Object.keys(tablesState).length <= 1) {
+      alert("마지막 테이블은 삭제할 수 없습니다.");
+      return;
+    }
+
+    // 주문이 있으면 경고
+    if (Object.keys(table.orders || {}).length > 0) {
+      const ok = confirm("이 카운터석의 주문이 모두 삭제됩니다. 계속하시겠습니까?");
+      if (!ok) return;
+    }
+
+    // 실제 삭제
+    delete tablesState[id];
+
+    // 현재 선택되어 있던 테이블이 삭제된 경우, 다른 테이블로 이동
+    if (currentTableId === id) {
+      const remainingIds = Object.keys(tablesState);
+      currentTableId = remainingIds.length > 0 ? remainingIds[0] : null;
+    }
+
+    renderTables();
+    updateCurrentTableView();
     saveAppState();
   }
 
