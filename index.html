@@ -2,601 +2,982 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>舍廊(サラン) 주문 계산기</title>
+  <title>舍廊(サラン) 주문 관리</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    :root {
-      --primary: #d84343;
-      --primary-soft: #ffecec;
-      --bg: #f4f4f9;
-      --text-main: #222;
-      --text-sub: #666;
-      --border: #ddd;
-      --radius: 10px;
-    }
-
-    /* 기본 스타일 */
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
+      margin: 0;
+      padding: 10px;
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-      "Noto Sans KR", Arial, sans-serif;
+      "Noto Sans KR", sans-serif;
+      background: #f4f4f4;
       display: flex;
       justify-content: center;
-      padding: 10px;
-      margin: 0;
-      background-color: var(--bg);
-      color: var(--text-main);
-      touch-action: manipulation;
     }
 
-    .container {
+    .app {
       width: 100%;
-      max-width: 480px;
-      background: #ffffff;
-      padding: 15px;
-      border-radius: var(--radius);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    }
-
-    /* 헤더 영역 */
-    .header {
-      margin-bottom: 10px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .restaurant-name {
-      font-size: 1.4em;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-    }
-
-    .restaurant-sub {
-      font-size: 0.85em;
-      color: var(--text-sub);
-      margin-top: 4px;
-      line-height: 1.4;
-    }
-
-    /* 합계 영역 */
-    .total-bar {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: linear-gradient(90deg, var(--primary), #f78c6c);
-      color: #fff;
-      border-radius: var(--radius);
-      padding: 12px 12px 10px 12px;
-      margin-bottom: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .total-amount-text {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-
-    .total-label {
-      font-size: 0.9em;
-      opacity: 0.9;
-    }
-
-    .total-value {
-      font-size: 1.4em;
-      font-weight: 700;
-    }
-
-    .total-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .btn {
-      flex: 1;
-      padding: 6px 8px;
-      font-size: 0.85em;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .btn-reset {
-      background-color: rgba(255, 255, 255, 0.15);
-      color: #fff;
-    }
-
-    .btn-copy {
-      background-color: #ffffff;
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    .btn:active {
-      transform: scale(0.97);
-    }
-
-    /* 로그 박스 */
-    .log-box {
-      background-color: #fafafa;
-      border: 1px solid var(--border);
-      padding: 8px 8px 28px 8px;
-      margin-bottom: 16px;
-      border-radius: 6px;
-      max-height: 220px;
-      overflow-y: auto;
-      font-size: 0.85em;
-      position: relative;
-    }
-
-    .log-item {
-      margin-bottom: 4px;
-      line-height: 1.4;
-    }
-
-    .total-log-amount {
-      position: sticky;
-      bottom: -8px;
-      padding: 6px 4px 0 4px;
-      font-weight: 600;
-      color: var(--text-main);
-      background: linear-gradient(to top, #fafafa 70%, rgba(250, 250, 250, 0));
-      text-align: right;
-      border-top: 1px solid var(--border);
-      font-size: 0.9em;
-    }
-
-    /* 카테고리 & 메뉴 */
-    .menu-category {
-      margin-bottom: 16px;
+      max-width: 900px;
+      background: #fff;
+      padding: 12px;
       border-radius: 8px;
-      border: 1px solid var(--border);
-      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
-    .category-title {
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.4rem;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    /* 상단 레이아웃 */
+    .top-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .panel {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      background: #fafafa;
+    }
+
+    .panel-title {
+      font-size: 0.9rem;
       font-weight: 600;
-      font-size: 1em;
-      padding: 10px;
-      color: var(--text-main);
-      background-color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    /* 테이블 선택 영역 */
+    .table-panel {
+      flex: 2 1 260px;
+    }
+
+    .table-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .table-btn {
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      border-radius: 16px;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .table-btn.active {
+      background: #d84343;
+      color: #fff;
+      border-color: #d84343;
+    }
+
+    .small-btn {
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      border-radius: 12px;
+      border: 1px solid #aaa;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .merge-row {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .merge-row select {
+      padding: 3px;
+      font-size: 0.8rem;
+    }
+
+    .merge-help {
+      font-size: 0.7rem;
+      color: #777;
+      margin-top: 3px;
+    }
+
+    /* 합계 / 飲み放題 패널 */
+    .total-panel {
+      flex: 3 1 320px;
+    }
+
+    .current-table-name {
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .total-amount {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .summary-list {
+      max-height: 180px;
+      overflow-y: auto;
+      margin-top: 4px;
+      padding-right: 4px;
+    }
+
+    .summary-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-size: 0.8rem;
+      padding: 2px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .summary-item span {
+      display: inline-block;
+    }
+
+    .summary-name {
+      max-width: 60%;
+    }
+
+    .summary-info {
+      white-space: nowrap;
+      margin-left: 4px;
+    }
+
+    .delete-btn {
+      margin-left: 6px;
+      padding: 2px 6px;
+      font-size: 0.7rem;
+      border-radius: 10px;
+      border: 1px solid #c00;
+      background: #fff0f0;
+      color: #c00;
       cursor: pointer;
-      border-bottom: 1px solid var(--border);
     }
 
-    .category-title span {
-      flex: 1;
+    .reset-btn {
+      margin-top: 4px;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      border-radius: 12px;
+      border: 1px solid #999;
+      background: #fff;
+      cursor: pointer;
     }
 
-    .category-toggle-btn {
+    .nomihodai-info {
+      margin-top: 6px;
+      padding: 6px;
+      background: #fff8e1;
+      border-radius: 6px;
+      border: 1px solid #f0d27a;
+      font-size: 0.78rem;
+    }
+
+    .nomihodai-memo {
+      width: 100%;
+      margin-top: 4px;
+      font-size: 0.75rem;
+      padding: 4px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      min-height: 40px;
+    }
+
+    /* 메뉴 영역 */
+    .menu-panel {
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .menu-header-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .category {
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      margin-bottom: 6px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .category-header {
+      width: 100%;
+      text-align: left;
+      padding: 6px 8px;
+      background: #f5f5f5;
       border: none;
-      background: var(--primary-soft);
-      color: var(--primary);
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 0.8em;
       cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .category-header span {
+      pointer-events: none;
+    }
+
+    .category-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      border-top: 1px solid #eee;
+    }
+
+    .category-body.open {
+      max-height: 1000px; /* 충분히 큰 값 */
     }
 
     .menu-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 10px;
-      border-top: 1px solid #f1f1f1;
-      background-color: #ffffff;
+      padding: 6px 8px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.8rem;
     }
 
-    .menu-item span {
-      font-size: 0.9em;
+    .menu-left {
+      display: flex;
+      flex-direction: column;
     }
 
     .menu-name {
-      flex: 1;
-      padding-right: 8px;
-      line-height: 1.3;
+      font-weight: 500;
     }
 
-    .quantity-control {
+    .menu-price {
+      color: #777;
+      font-size: 0.75rem;
+    }
+
+    .menu-right {
       display: flex;
       align-items: center;
       gap: 4px;
     }
 
-    .quantity-control button {
-      width: 30px;
-      height: 30px;
-      font-size: 1.2em;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background-color: #f7f7f7;
-      cursor: pointer;
-      transition: background-color 0.15s, transform 0.05s;
-    }
-
-    .quantity-control button:active {
-      transform: scale(0.94);
-    }
-
-    .quantity-control button:hover {
-      background-color: #ececec;
-    }
-
-    .quantity-display {
+    .qty-display {
       min-width: 20px;
       text-align: center;
-      font-size: 0.95em;
+      font-size: 0.8rem;
     }
 
-    .soft-drink-input {
-      width: 100%;
-      margin-top: 4px;
-      padding: 5px 6px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.8em;
+    .qty-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background: #f8f8f8;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
     }
 
-    .menu-item-body {
-      display: flex;
+    /* 소프트드링크 전용 */
+    .soft-row {
       flex-direction: column;
-      flex: 1;
-      margin-right: 6px;
+      align-items: flex-start;
     }
 
-    .hidden {
-      display: none;
+    .soft-input-row {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+      width: 100%;
+    }
+
+    .soft-input-row input {
+      flex: 1;
+      padding: 4px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    .soft-input-row button {
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      border: 1px solid #888;
+      background: #eee;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 600px) {
+      .top-row {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
+<div class="app">
+  <h1>舍廊(サラン) 주문 관리</h1>
+  <div class="subtitle">
+    테이블 선택 → 메뉴 입력 → 테이블별 합계/飲み放題 시간 관리.
+  </div>
 
-<div class="container">
-  <!-- 헤더 -->
-  <div class="header">
-    <div class="restaurant-name">舍廊(サラン)</div>
-    <div class="restaurant-sub">
-      한국식 안주와 마ッコリ, 다양한 주류를 즐길 수 있는 작은 식당입니다.<br>
-      아래 계산기는 직원·손님 모두 주문 금액을 확인하는 용도로 사용 가능합니다.
+  <div class="top-row">
+    <!-- 테이블 선택 패널 -->
+    <div class="panel table-panel">
+      <div class="panel-title">테이블 선택 / 카운터 관리</div>
+      <div class="table-list" id="tableList"></div>
+      <button class="small-btn" onclick="addCounterGroup()">카운터 그룹 추가</button>
+
+      <div class="merge-row">
+        <span style="font-size:0.75rem;">합석:</span>
+        <select id="mergeFrom"></select>
+        <span style="font-size:0.8rem;">→</span>
+        <select id="mergeTo"></select>
+        <button class="small-btn" onclick="mergeTables()">합석 적용</button>
+      </div>
+      <div class="merge-help">
+        기준 테이블(왼쪽)에 합석할 테이블(오른쪽)의 주문을 모두 더하고,<br>
+        합석된 테이블의 주문은 0으로 초기화됩니다.
+      </div>
+    </div>
+
+    <!-- 합계 / 飲み放題 패널 -->
+    <div class="panel total-panel">
+      <div class="panel-title">현재 테이블 / 합계</div>
+      <div class="current-table-name" id="currentTableName">선택된 테이블 없음</div>
+      <div class="total-amount" id="totalAmount">합계: 0 円</div>
+      <button class="reset-btn" onclick="resetCurrentTable()">현재 테이블 주문 초기화</button>
+
+      <div class="summary-list" id="summaryList">
+        <!-- 테이블별 주문 요약 표시 -->
+      </div>
+
+      <div class="nomihodai-info" id="nomihodaiInfo" style="display:none;">
+        <div><strong>飲み放題 정보</strong></div>
+        <div id="nomihodaiTimes"></div>
+        <textarea
+          id="nomihodaiMemo"
+          class="nomihodai-memo"
+          placeholder="손님이 주문한 주류/음료를 메모하세요."
+          oninput="updateNomihodaiMemo(this.value)"
+        ></textarea>
+      </div>
     </div>
   </div>
 
-  <!-- 합계 바 -->
-  <div class="total-bar">
-    <div class="total-amount-text">
-      <div class="total-label">현재 합계</div>
-      <div class="total-value" id="total-amount">0 円</div>
+  <!-- 메뉴 패널 -->
+  <div class="menu-panel">
+    <div class="menu-header">
+      <div class="menu-header-title">메뉴</div>
+      <div style="font-size:0.75rem;color:#777;">카테고리 제목을 눌러 펼치기 / 접기</div>
     </div>
-    <div class="total-actions">
-      <button class="btn btn-reset" onclick="resetAll()">전체 초기화</button>
-      <button class="btn btn-copy" onclick="copySummary()">주문 요약 복사</button>
-    </div>
-  </div>
-
-  <!-- 로그 박스 -->
-  <div class="log-box" id="logBox">
-    <!-- 선택된 메뉴 로그가 여기에 표시됩니다 -->
-    <div class="total-log-amount" id="totalLogAmount">합계: 0 円</div>
-  </div>
-
-  <!-- 메뉴 항목들 -->
-  <div id="menuContainer">
-    <!-- 메뉴 항목은 JavaScript에서 생성 -->
+    <div id="menuContainer"></div>
   </div>
 </div>
 
 <script>
+  /*************************************************************
+   * 메뉴 데이터
+   *************************************************************/
   const menuData = {
     "お通し": [
-      { name: "お通し(お一人様)", price: 200 }
+      { id: "otoshi", name: "お通し(お一人様)", price: 200 }
     ],
     "주류（お酒）": [
-      { name: "飲み放題(2시간)", price: 2530 },
-      { name: "生ビール", price: 660 },
-      { name: "소주（韓国焼酎）", price: 1320 },
-      { name: "병맥주（瓶ビール）", price: 770 },
-      { name: "논알콜맥주（ノンアルコールビール）", price: 660 }
+      { id: "nomihodai", name: "飲み放題(2時間)", price: 2530, isNomihodai: true },
+      { id: "nama-beer", name: "生ビール", price: 660 },
+      { id: "soju", name: "소주（韓国焼酎）", price: 1320 },
+      { id: "bottle-beer", name: "병맥주（瓶ビール）", price: 770 },
+      { id: "non-al-beer", name: "논알콜맥주（ノンアルコールビール）", price: 660 }
     ],
     "막걸리류（マッコリ）": [
-      { name: "막걸리 사이다（マッコリ　サイダ）", price: 610 },
-      { name: "막걸리 글라스（マッコリ　グラス）", price: 610 },
-      { name: "생막걸리（生マッコリ）", price: 1870 },
-      { name: "이동막걸리（EDon マッコリ）", price: 1980 },
-      { name: "꿀추가（蜂蜜追加）", price: 110 }
+      { id: "mak-soda", name: "막걸리 사이다（マッコリ　サイダ）", price: 610 },
+      { id: "mak-glass", name: "막걸리 글라스（マッコリ　グラス）", price: 610 },
+      { id: "nam-mak", name: "생막걸리（生マッコリ）", price: 1870 },
+      { id: "edon-mak", name: "이동막걸리（EDon マッコリ）", price: 1980 },
+      { id: "mak-honey", name: "꿀추가（蜂蜜追加）", price: 110 }
     ],
     "기타 주류（他のお酒）": [
-      { name: "츄하이/하이볼（チューハイ/ハイボール）", price: 550 },
-      { name: "우메슈/니혼슈（梅酒/日本酒）", price: 550 },
-      { name: "고려인삼주（高麗人参酒）", price: 660 }
+      { id: "chu-hi-highball", name: "츄하이/하이볼（チューハイ/ハイボール）", price: 550 },
+      { id: "umeshu-sake", name: "우메슈/니혼슈（梅酒/日本酒）", price: 550 },
+      { id: "insam-ju", name: "고려인삼주（高麗人参酒）", price: 660 }
     ],
     "소프트드링크（ソフトドリンク）": [
-      { name: "전메뉴（全メニュー）", price: 440 }
+      { id: "soft-all", name: "전메뉴（全メニュー）", price: 440, type: "soft" }
     ],
     "안주류（おつまみ）": [
-      { name: "상추 샐러드（チシャサラダ)", price: 770 },
-      { name: "김치모듬（キムチ盛り合わせ)", price: 1100 },
-      { name: "나물모듬（ナムル盛り合わせ)", price: 880 },
-      { name: "잡채（チャプチェ)", price: 1320 },
-      { name: "계란찜（ケランチム)", price: 880 },
-      { name: "오징어볶음（イカ炒め)", price: 1430 }
+      { id: "lettuce-salad", name: "상추 샐러드（チシャサラダ)", price: 770 },
+      { id: "kimchi-mori", name: "김치모듬（キムチ盛り合わせ)", price: 1100 },
+      { id: "namul-mori", name: "나물모듬（ナムル盛り合わせ)", price: 880 },
+      { id: "japchae", name: "잡채（チャプチェ)", price: 1320 },
+      { id: "gyeran-jjim", name: "계란찜（ケランチム)", price: 880 },
+      { id: "ojingeo-bok", name: "오징어볶음（イカ炒め)", price: 1430 }
     ],
     "찌개류（鍋、チゲ）": [
-      { name: "오뎅탕（おでん鍋)", price: 1320 },
-      { name: "칼국수（カルグクス)", price: 1210 },
-      { name: "된장찌개（味噌チゲ)", price: 1320 },
-      { name: "참치 김치찌개（ツナキムチチゲ)", price: 1430 },
-      { name: "김치찌개（キムチチゲ)", price: 1540 },
-      { name: "순두부(해물/돼지고기)（スンドゥブ（海鮮・豚）)", price: 1320 },
-      { name: "설렁탕（ソルロンタン)", price: 1430 },
-      { name: "소고기국밥（ソゴギクッパ)", price: 1320 },
-      { name: "닭볶음탕（鳥炒め)", price: 1430 },
-      { name: "감자탕（カムジャタン)", price: 1980 },
-      { name: "삼계탕（サムゲタン)", price: 2750 }
+      { id: "oden-nabe", name: "오뎅탕（おでん鍋)", price: 1320 },
+      { id: "kalguksu", name: "칼국수（カルグクス)", price: 1210 },
+      { id: "doenjang-jjige", name: "된장찌개（味噌チゲ)", price: 1320 },
+      { id: "tuna-kimchi-jjige", name: "참치 김치찌개（ツナキムチチゲ)", price: 1430 },
+      { id: "kimchi-jjige", name: "김치찌개（キムチチゲ)", price: 1540 },
+      { id: "soondubu", name: "순두부(해물/돼지고기)（スンドゥブ（海鮮・豚）)", price: 1320 },
+      { id: "seolleongtang", name: "설렁탕（ソルロンタン)", price: 1430 },
+      { id: "beef-gukbap", name: "소고기국밥（ソゴギクッパ)", price: 1320 },
+      { id: "dak-bokkeum-tang", name: "닭볶음탕（鳥炒め)", price: 1430 },
+      { id: "gamjatang", name: "감자탕（カムジャタン)", price: 1980 },
+      { id: "samgyetang", name: "삼계탕（サムゲタン)", price: 2750 }
     ],
     "비빔밥류（ビビンバ）": [
-      { name: "야채비빔밥（野菜ビビンバ)", price: 1210 },
-      { name: "돌솥비빔밥（石焼ビビンバ)", price: 1210 },
-      { name: "오징어 돌솥비빔밥（イカ石焼ビビンバ)", price: 1430 },
-      { name: "공기밥（ご飯)", price: 250 }
+      { id: "vege-bibimbap", name: "야채비빔밥（野菜ビビンバ)", price: 1210 },
+      { id: "dolsot-bibimbap", name: "돌솥비빔밥（石焼ビビンバ)", price: 1210 },
+      { id: "ojingeo-dolsot", name: "오징어 돌솥비빔밥（イカ石焼ビビンバ)", price: 1430 },
+      { id: "rice", name: "공기밥（ご飯)", price: 250 }
     ],
     "면류（麺）": [
-      { name: "냉면（冷麺)", price: 1100 },
-      { name: "비빔국수（ビビン素麺)", price: 1210 }
+      { id: "naengmyeon", name: "냉면（冷麺)", price: 1100 },
+      { id: "bibim-guksu", name: "비빔국수（ビビン素麺)", price: 1210 }
     ],
     "김밥류（キンパブ）": [
-      { name: "김밥（キンパブ)", price: 1210 },
-      { name: "불고기김밥（プルゴギキンパブ)", price: 1320 },
-      { name: "창자김밥（チャンジャ巻き)", price: 1210 },
-      { name: "매운치즈김밥（辛いチーズキンパブ)", price: 1320 }
+      { id: "kimbap", name: "김밥（キンパブ)", price: 1210 },
+      { id: "bulgogi-kimbap", name: "불고기김밥（プルゴギキンパブ)", price: 1320 },
+      { id: "changja-roll", name: "창자김밥（チャンジャ巻き)", price: 1210 },
+      { id: "spicy-cheese-kimbap", name: "매운치즈김밥（辛いチーズキンパブ)", price: 1320 }
     ],
     "전류（チヂミ）": [
-      { name: "해물전（海鮮チヂミ)", price: 1430 },
-      { name: "김치전（キムチチヂミ)", price: 1320 },
-      { name: "김치 치즈전（キムチチーズチヂミ)", price: 1430 },
-      { name: "감자전（ジャガイモチヂミ)", price: 880 },
-      { name: "해물파전（へムルパジョン)", price: 1650 }
+      { id: "seafood-jeon", name: "해물전（海鮮チヂミ)", price: 1430 },
+      { id: "kimchi-jeon", name: "김치전（キムチチヂミ)", price: 1320 },
+      { id: "kimchi-cheese-jeon", name: "김치 치즈전（キムチチーズチヂミ)", price: 1430 },
+      { id: "potato-jeon", name: "감자전（ジャガイモチヂミ)", price: 880 },
+      { id: "haemul-pajeon", name: "해물파전（へムルパジョン)", price: 1650 }
     ],
-    "고기류(삼겹살)（お肉：サムギョプサル）": [
-      { name: "삼겹살 디럭스코스(2인 이상)（サムギョップサルDXコース)", price: 4400 },
-      { name: "삼겹살 A코스(2인 이상)（サムギョップサルAコース)", price: 2970 },
-      { name: "삼겹살(2인 이상)（サムギョップサル)", price: 1650 },
-      { name: "고기추가（お肉追加)", price: 880 },
-      { name: "상추/마늘/청양고추 추가（サンチュ・ニンニク・青唐辛子)", price: 330 }
+    "고기류(삼겹살）": [
+      { id: "samgyeopsal-dx", name: "삼겹살 디럭스코스(2인 이상)（サムギョップサルDXコース)", price: 4400 },
+      { id: "samgyeopsal-a", name: "삼겹살 A코스(2인 이상)（サムギョップサルAコース)", price: 2970 },
+      { id: "samgyeopsal", name: "삼겹살(2인 이상)（サムギョップサル)", price: 1650 },
+      { id: "meat-add", name: "고기추가（お肉追加)", price: 880 },
+      { id: "sangchu-set", name: "상추/마늘/청양고추 추가（サンチュ・ニンニク・青唐辛子)", price: 330 }
     ],
-    "고기류(닭고기)（お肉：鶏肉）": [
-      { name: "치즈 닭갈비（チーズタッカルビ)", price: 1540 },
-      { name: "치즈 추가（チーズ追加)", price: 330 },
-      { name: "닭강정（タッカンジョン)", price: 1650 }
+    "고기류(닭고기）": [
+      { id: "cheese-dakgalbi", name: "치즈 닭갈비（チーズタッカルビ)", price: 1540 },
+      { id: "cheese-add", name: "치즈 추가（チーズ追加)", price: 330 },
+      { id: "dakgangjeong", name: "닭강정（タッカンジョン)", price: 1650 }
     ],
-    "고기류(기타)（お肉：その他）": [
-      { name: "LA갈비（LAカルビ)", price: 2200 },
-      { name: "족발（豚足)", price: 2200 },
-      { name: "제육볶음（辛い豚肉炒め)", price: 1320 },
-      { name: "오삼불고기（イカ炒めサムギョップサル)", price: 1650 },
-      { name: "순대（スンデ)", price: 1320 },
-      { name: "불고기（プルゴギ)", price: 1430 }
+    "고기류(기타）": [
+      { id: "la-galbi", name: "LA갈비（LAカルビ)", price: 2200 },
+      { id: "jokbal", name: "족발（豚足)", price: 2200 },
+      { id: "jeyuk-bok", name: "제육볶음（辛い豚肉炒め)", price: 1320 },
+      { id: "osam-bulgogi", name: "오삼불고기（イカ炒めサムギョップサル)", price: 1650 },
+      { id: "soondae", name: "순대（スンデ)", price: 1320 },
+      { id: "bulgogi", name: "불고기（プルゴギ)", price: 1430 }
     ],
     "떡볶이류（トッポッキ）": [
-      { name: "떡볶이（トッポッキ)", price: 1100 },
-      { name: "치즈 떡볶이（チーズトッポッキ)", price: 1210 },
-      { name: "라볶이（ラポッキ)", price: 1210 },
-      { name: "치즈 라볶이（チーズラポッキ)", price: 1320 },
-      { name: "기름 떡볶이（キルムトッポッキ)", price: 990 },
-      { name: "불고기 떡볶이（プルゴギトッポッキ)", price: 1320 }
+      { id: "tteokbokki", name: "떡볶이（トッポッキ)", price: 1100 },
+      { id: "cheese-tteokbokki", name: "치즈 떡볶이（チーズトッポッキ)", price: 1210 },
+      { id: "rabokki", name: "라볶이（ラポッキ)", price: 1210 },
+      { id: "cheese-rabokki", name: "치즈 라볶이（チーズラポッキ)", price: 1320 },
+      { id: "oil-tteokbokki", name: "기름 떡볶이（キルムトッポッキ)", price: 990 },
+      { id: "bulgogi-tteokbokki", name: "불고기 떡볶이（プルゴギトッポッキ)", price: 1320 }
     ]
   };
 
-  window.onload = function () {
-    const menuContainer = document.getElementById("menuContainer");
+  /*************************************************************
+   * 테이블 상태
+   *************************************************************/
+  const tablesState = {}; // tableId -> { displayName, orders, nomihodaiStart, nomihodaiMemo }
+  let currentTableId = null;
+  let counterIndex = 1;
+  const NOMIHODAI_KEY = "nomihodai";
 
-    for (const category in menuData) {
-      const categoryDiv = document.createElement("div");
-      categoryDiv.classList.add("menu-category");
+  // 메뉴 itemId -> itemData
+  const itemsIndex = {};
 
-      const categoryTitle = document.createElement("div");
-      categoryTitle.classList.add("category-title");
-
-      const titleSpan = document.createElement("span");
-      titleSpan.innerText = category;
-
-      const toggleButton = document.createElement("button");
-      toggleButton.className = "category-toggle-btn";
-      toggleButton.innerText = "열기";
-      toggleButton.onclick = () => toggleMenuItems(categoryDiv, toggleButton);
-
-      categoryTitle.appendChild(titleSpan);
-      categoryTitle.appendChild(toggleButton);
-      categoryDiv.appendChild(categoryTitle);
-
-      menuData[category].forEach(item => {
-        const menuItem = document.createElement("div");
-        menuItem.classList.add("menu-item", "hidden");
-
-        const itemBody = document.createElement("div");
-        itemBody.classList.add("menu-item-body");
-
-        const itemName = document.createElement("span");
-        itemName.classList.add("menu-name");
-        itemName.innerText = `${item.name} - ${item.price.toLocaleString()}円`;
-        itemBody.appendChild(itemName);
-
-        // 소프트 드링크 커스텀 입력
-        let customInput = null;
-        if (category === "소프트드링크（ソフトドリンク）" &&
-          item.name === "전메뉴（全メニュー）") {
-          customInput = document.createElement("input");
-          customInput.type = "text";
-          customInput.placeholder = "소프트드링크 메뉴 이름 입력";
-          customInput.className = "soft-drink-input";
-          customInput.id = `${item.name}-custom`;
-          itemBody.appendChild(customInput);
-        }
-
-        const quantityControl = document.createElement("div");
-        quantityControl.classList.add("quantity-control");
-
-        const decreaseButton = document.createElement("button");
-        decreaseButton.innerText = "-";
-        decreaseButton.onclick = () =>
-          updateQuantity(item.name, -1, item.price, category);
-
-        const quantityDisplay = document.createElement("span");
-        quantityDisplay.id = `${item.name}-quantity`;
-        quantityDisplay.className = "quantity-display";
-        quantityDisplay.innerText = "0";
-
-        const increaseButton = document.createElement("button");
-        increaseButton.innerText = "+";
-        increaseButton.onclick = () =>
-          updateQuantity(item.name, 1, item.price, category);
-
-        quantityControl.appendChild(decreaseButton);
-        quantityControl.appendChild(quantityDisplay);
-        quantityControl.appendChild(increaseButton);
-
-        menuItem.appendChild(itemBody);
-        menuItem.appendChild(quantityControl);
-
-        categoryDiv.appendChild(menuItem);
-      });
-
-      menuContainer.appendChild(categoryDiv);
-    }
-  };
-
-  function toggleMenuItems(categoryDiv, button) {
-    const menuItems = categoryDiv.querySelectorAll(".menu-item");
-    const isHidden = Array.from(menuItems).every(item => item.classList.contains("hidden"));
-    menuItems.forEach(item => item.classList.toggle("hidden", !isHidden));
-    button.innerText = isHidden ? "닫기" : "열기";
+  /*************************************************************
+   * 초기화
+   *************************************************************/
+  function init() {
+    initTables();
+    initMenu();
+    renderTables();
+    refreshMergeSelects();
   }
 
-  function updateQuantity(item, change, price, category) {
-    const quantityElem = document.getElementById(`${item}-quantity`);
-    if (!quantityElem) return;
+  function initTables() {
+    const baseTables = [
+      { id: "1f-counter-1", name: "1F 카운터석 #1 (기본)" },
+      { id: "1f-table-1", name: "1F 테이블 1번" },
+      { id: "1f-table-2", name: "1F 테이블 2번" },
+      { id: "2f-table-1", name: "2F 테이블 1번" },
+      { id: "2f-table-2", name: "2F 테이블 2번" }
+    ];
+    counterIndex = 1;
 
-    const customInput = document.getElementById(`${item}-custom`);
-    const newQuantity = Math.max(parseInt(quantityElem.innerText) + change, 0);
-    quantityElem.innerText = newQuantity.toString();
+    baseTables.forEach(t => {
+      tablesState[t.id] = {
+        displayName: t.name,
+        orders: {}, // orderKey -> { itemId, name, price, qty, softName? }
+        nomihodaiStart: null,
+        nomihodaiMemo: ""
+      };
+    });
 
-    updateTotal();
-
-    const logBox = document.getElementById("logBox");
-    let logItem = Array.from(logBox.children).find(
-      el => el.dataset && el.dataset.item === item && el.dataset.category === category
-    );
-
-    if (!logItem) {
-      logItem = document.createElement("div");
-      logItem.className = "log-item";
-      logItem.dataset.item = item;
-      logItem.dataset.category = category;
-      logBox.insertBefore(logItem, document.getElementById("totalLogAmount"));
-    }
-
-    const customText = customInput && customInput.value
-      ? ` (${customInput.value})`
-      : "";
-
-    if (newQuantity === 0) {
-      logBox.removeChild(logItem);
-    } else {
-      const itemTotal = newQuantity * price;
-      logItem.innerText =
-        `▪️ ${item}${customText}  ${newQuantity}개  = ${itemTotal.toLocaleString()} 円`;
-    }
-
-    logBox.scrollTop = logBox.scrollHeight;
+    currentTableId = "1f-counter-1";
   }
 
-  function updateTotal() {
-    let total = 0;
-    for (const category in menuData) {
-      menuData[category].forEach(item => {
-        const quantityElem = document.getElementById(`${item.name}-quantity`);
-        const quantity = quantityElem ? parseInt(quantityElem.innerText) || 0 : 0;
-        total += quantity * item.price;
-      });
-    }
-    document.getElementById("total-amount").innerText =
-      `${total.toLocaleString()} 円`;
-    document.getElementById("totalLogAmount").innerText =
-      `합계: ${total.toLocaleString()} 円`;
+  function addCounterGroup() {
+    counterIndex++;
+    const id = `1f-counter-${counterIndex}`;
+    tablesState[id] = {
+      displayName: `1F 카운터석 #${counterIndex}`,
+      orders: {},
+      nomihodaiStart: null,
+      nomihodaiMemo: ""
+    };
+    renderTables();
+    refreshMergeSelects();
   }
 
-  function resetAll() {
-    // 수량 0으로 초기화
-    for (const category in menuData) {
-      menuData[category].forEach(item => {
-        const quantityElem = document.getElementById(`${item.name}-quantity`);
-        if (quantityElem) quantityElem.innerText = "0";
+  /*************************************************************
+   * 테이블 렌더링 및 선택
+   *************************************************************/
+  function renderTables() {
+    const tableList = document.getElementById("tableList");
+    tableList.innerHTML = "";
 
-        const customInput = document.getElementById(`${item.name}-custom`);
-        if (customInput) customInput.value = "";
-      });
+    Object.keys(tablesState).forEach(id => {
+      const btn = document.createElement("button");
+      btn.className = "table-btn" + (id === currentTableId ? " active" : "");
+      btn.innerText = tablesState[id].displayName;
+      btn.onclick = () => selectTable(id);
+      tableList.appendChild(btn);
+    });
+
+    updateCurrentTableView();
+  }
+
+  function selectTable(id) {
+    currentTableId = id;
+    renderTables();
+    refreshMergeSelects();
+  }
+
+  function refreshMergeSelects() {
+    const mergeFrom = document.getElementById("mergeFrom");
+    const mergeTo = document.getElementById("mergeTo");
+    mergeFrom.innerHTML = "";
+    mergeTo.innerHTML = "";
+
+    Object.entries(tablesState).forEach(([id, state]) => {
+      const opt1 = document.createElement("option");
+      opt1.value = id;
+      opt1.textContent = state.displayName;
+      mergeFrom.appendChild(opt1);
+
+      const opt2 = document.createElement("option");
+      opt2.value = id;
+      opt2.textContent = state.displayName;
+      mergeTo.appendChild(opt2);
+    });
+
+    if (currentTableId && tablesState[currentTableId]) {
+      mergeFrom.value = currentTableId;
     }
+  }
 
-    // 로그 초기화
-    const logBox = document.getElementById("logBox");
-    Array.from(logBox.children).forEach(child => {
-      if (child.id !== "totalLogAmount") {
-        logBox.removeChild(child);
+  function mergeTables() {
+    const fromId = document.getElementById("mergeFrom").value;
+    const toId = document.getElementById("mergeTo").value;
+    if (!fromId || !toId || fromId === toId) return;
+
+    const from = tablesState[fromId];
+    const to = tablesState[toId];
+
+    // 주문 합치기
+    Object.entries(from.orders).forEach(([orderKey, order]) => {
+      const existing = to.orders[orderKey];
+      if (existing) {
+        existing.qty += order.qty;
+      } else {
+        to.orders[orderKey] = { ...order };
       }
     });
 
-    // 합계 초기화
-    updateTotal();
+    // 飲み放題 시간 / 메모: 기준 테이블(mergeFrom)에 있으면 to에 없을 때만 복사
+    if (from.nomihodaiStart && !to.nomihodaiStart) {
+      to.nomihodaiStart = from.nomihodaiStart;
+    }
+    if (from.nomihodaiMemo && !to.nomihodaiMemo) {
+      to.nomihodaiMemo = from.nomihodaiMemo;
+    }
+
+    // from 초기화
+    from.orders = {};
+    from.nomihodaiStart = null;
+    from.nomihodaiMemo = "";
+
+    // 현재 테이블이 합석한 곳이면 거기로 전환
+    currentTableId = toId;
+    renderTables();
+    refreshMergeSelects();
   }
 
-  function copySummary() {
-    const logBox = document.getElementById("logBox");
-    const items = Array
-      .from(logBox.children)
-      .filter(child => child.id !== "totalLogAmount");
-    const totalText = document.getElementById("totalLogAmount").innerText;
+  /*************************************************************
+   * 메뉴 UI 생성
+   *************************************************************/
+  function initMenu() {
+    const menuContainer = document.getElementById("menuContainer");
+    menuContainer.innerHTML = "";
 
-    if (items.length === 0) {
-      alert("선택된 메뉴가 없습니다.");
+    Object.entries(menuData).forEach(([categoryName, items]) => {
+      const categoryDiv = document.createElement("div");
+      categoryDiv.className = "category";
+
+      // header
+      const headerBtn = document.createElement("button");
+      headerBtn.className = "category-header";
+      headerBtn.onclick = () => toggleCategoryBody(bodyDiv);
+
+      const titleSpan = document.createElement("span");
+      titleSpan.textContent = categoryName;
+
+      const arrowSpan = document.createElement("span");
+      arrowSpan.textContent = "＋";
+
+      headerBtn.appendChild(titleSpan);
+      headerBtn.appendChild(arrowSpan);
+
+      // body
+      const bodyDiv = document.createElement("div");
+      bodyDiv.className = "category-body";
+
+      items.forEach(item => {
+        itemsIndex[item.id] = { ...item, category: categoryName };
+
+        if (item.type === "soft") {
+          const row = document.createElement("div");
+          row.className = "menu-item soft-row";
+
+          const left = document.createElement("div");
+          left.className = "menu-left";
+          const n = document.createElement("div");
+          n.className = "menu-name";
+          n.textContent = `${item.name}`;
+          const p = document.createElement("div");
+          p.className = "menu-price";
+          p.textContent = `${item.price.toLocaleString()} 円 (메뉴명 직접 입력)`;
+          left.appendChild(n);
+          left.appendChild(p);
+
+          const softRow = document.createElement("div");
+          softRow.className = "soft-input-row";
+          const input = document.createElement("input");
+          input.type = "text";
+          input.placeholder = "예) 콜라, 사이다, 오렌지주스";
+          input.id = `soft-input-${item.id}`;
+          const btn = document.createElement("button");
+          btn.textContent = "추가";
+          btn.onclick = () => addSoftDrink(item.id);
+          softRow.appendChild(input);
+          softRow.appendChild(btn);
+
+          row.appendChild(left);
+          row.appendChild(softRow);
+          bodyDiv.appendChild(row);
+        } else {
+          const row = document.createElement("div");
+          row.className = "menu-item";
+
+          const left = document.createElement("div");
+          left.className = "menu-left";
+
+          const n = document.createElement("div");
+          n.className = "menu-name";
+          n.textContent = item.name;
+
+          const p = document.createElement("div");
+          p.className = "menu-price";
+          p.textContent = `${item.price.toLocaleString()} 円`;
+
+          left.appendChild(n);
+          left.appendChild(p);
+
+          const right = document.createElement("div");
+          right.className = "menu-right";
+
+          const minusBtn = document.createElement("button");
+          minusBtn.className = "qty-btn";
+          minusBtn.textContent = "-";
+          minusBtn.onclick = () => changeNormalItemQuantity(item.id, -1);
+
+          const qtySpan = document.createElement("span");
+          qtySpan.className = "qty-display";
+          qtySpan.id = `qty-${item.id}`;
+          qtySpan.textContent = "0";
+
+          const plusBtn = document.createElement("button");
+          plusBtn.className = "qty-btn";
+          plusBtn.textContent = "+";
+          plusBtn.onclick = () => changeNormalItemQuantity(item.id, +1);
+
+          right.appendChild(minusBtn);
+          right.appendChild(qtySpan);
+          right.appendChild(plusBtn);
+
+          row.appendChild(left);
+          row.appendChild(right);
+          bodyDiv.appendChild(row);
+        }
+      });
+
+      categoryDiv.appendChild(headerBtn);
+      categoryDiv.appendChild(bodyDiv);
+      menuContainer.appendChild(categoryDiv);
+    });
+  }
+
+  function toggleCategoryBody(bodyDiv) {
+    const isOpen = bodyDiv.classList.contains("open");
+    if (isOpen) {
+      bodyDiv.classList.remove("open");
+      bodyDiv.previousSibling.querySelector("span:last-child").textContent = "＋";
+    } else {
+      bodyDiv.classList.add("open");
+      bodyDiv.previousSibling.querySelector("span:last-child").textContent = "－";
+    }
+  }
+
+  /*************************************************************
+   * 주문 조작: 일반 메뉴
+   *************************************************************/
+  function getCurrentTableState() {
+    if (!currentTableId) return null;
+    return tablesState[currentTableId];
+  }
+
+  function changeNormalItemQuantity(itemId, delta) {
+    const table = getCurrentTableState();
+    if (!table) return;
+
+    const item = itemsIndex[itemId];
+    if (!item) return;
+
+    const orderKey = itemId; // 일반 메뉴는 itemId로 key 고정
+    const existing = table.orders[orderKey] || {
+      itemId,
+      name: item.name,
+      price: item.price,
+      qty: 0
+    };
+
+    let newQty = existing.qty + delta;
+    if (newQty < 0) newQty = 0;
+    existing.qty = newQty;
+
+    if (newQty === 0) {
+      delete table.orders[orderKey];
+    } else {
+      table.orders[orderKey] = existing;
+    }
+
+    // 飲み放題 시간 처리
+    if (item.isNomihodai) {
+      if (existing.qty > 0 && !table.nomihodaiStart) {
+        table.nomihodaiStart = new Date();
+      }
+      if (existing.qty === 0) {
+        table.nomihodaiStart = null;
+        table.nomihodaiMemo = "";
+      }
+    }
+
+    updateCurrentTableView();
+  }
+
+  /*************************************************************
+   * 주문 조작: 소프트드링크 전메뉴
+   *************************************************************/
+  function addSoftDrink(itemId) {
+    const table = getCurrentTableState();
+    if (!table) return;
+
+    const item = itemsIndex[itemId];
+    if (!item) return;
+
+    const input = document.getElementById(`soft-input-${itemId}`);
+    if (!input) return;
+
+    const label = (input.value || "").trim();
+    if (!label) {
+      alert("소프트드링크 메뉴명을 입력해주세요.");
       return;
     }
 
-    const lines = items.map(el => el.innerText);
-    const text =
-      `舍廊(サラン) 주문 내역\n` +
-      `----------------------\n` +
-      lines.join("\n") +
-      `\n----------------------\n` +
-      totalText;
+    // 주문을 '전메뉴 + 메뉴명' 별로 분리
+    const orderKey = `${itemId}::${label}`;
+    const displayName = `${item.name} - ${label}`;
 
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text)
-        .then(() => {
-          alert("주문 요약이 클립보드에 복사되었습니다.");
-        })
-        .catch(() => {
-          fallbackCopy(text);
-        });
+    const existing = table.orders[orderKey] || {
+      itemId,
+      name: displayName,
+      price: item.price,
+      qty: 0,
+      softName: label
+    };
+    existing.qty += 1;
+    table.orders[orderKey] = existing;
+
+    // 입력창은 그대로 두거나 비워도 됨. 여기서는 그대로 둠.
+    updateCurrentTableView();
+  }
+
+  /*************************************************************
+   * 테이블 상태 표시 / 합계 / 요약 / 飲み放題 표시
+   *************************************************************/
+  function updateCurrentTableView() {
+    const table = getCurrentTableState();
+    const currentTableName = document.getElementById("currentTableName");
+    const totalAmountEl = document.getElementById("totalAmount");
+    const summaryList = document.getElementById("summaryList");
+    const nomihodaiInfo = document.getElementById("nomihodaiInfo");
+    const nomihodaiTimes = document.getElementById("nomihodaiTimes");
+    const nomihodaiMemo = document.getElementById("nomihodaiMemo");
+
+    // 수량 표시 초기화
+    Object.keys(itemsIndex).forEach(id => {
+      const span = document.getElementById(`qty-${id}`);
+      if (span) span.textContent = "0";
+    });
+
+    if (!table) {
+      currentTableName.textContent = "선택된 테이블 없음";
+      totalAmountEl.textContent = "합계: 0 円";
+      summaryList.innerHTML = "";
+      nomihodaiInfo.style.display = "none";
+      return;
+    }
+
+    currentTableName.textContent = `현재 테이블: ${table.displayName}`;
+
+    // 합계 및 요약 생성
+    let total = 0;
+    summaryList.innerHTML = "";
+
+    Object.entries(table.orders).forEach(([orderKey, order]) => {
+      const lineTotal = order.price * order.qty;
+      total += lineTotal;
+
+      // 일반 메뉴 수량 span 업데이트
+      if (!order.softName) {
+        const span = document.getElementById(`qty-${order.itemId}`);
+        if (span) span.textContent = String(order.qty);
+      }
+
+      const row = document.createElement("div");
+      row.className = "summary-item";
+
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "summary-name";
+      nameSpan.textContent = order.name;
+
+      const infoSpan = document.createElement("span");
+      infoSpan.className = "summary-info";
+      infoSpan.textContent = `${order.qty}개 = ${lineTotal.toLocaleString()} 円`;
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "delete-btn";
+      delBtn.textContent = "삭제";
+      delBtn.onclick = () => deleteOrder(orderKey);
+
+      row.appendChild(nameSpan);
+      row.appendChild(infoSpan);
+      row.appendChild(delBtn);
+      summaryList.appendChild(row);
+    });
+
+    totalAmountEl.textContent = `합계: ${total.toLocaleString()} 円`;
+
+    // 飲み放題 정보 표시
+    if (table.nomihodaiStart) {
+      nomihodaiInfo.style.display = "block";
+      const start = table.nomihodaiStart;
+      const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+
+      nomihodaiTimes.textContent =
+        `시작: ${formatTime(start)}  /  종료 예정: ${formatTime(end)}`;
+      nomihodaiMemo.value = table.nomihodaiMemo || "";
     } else {
-      fallbackCopy(text);
+      nomihodaiInfo.style.display = "none";
+      nomihodaiMemo.value = "";
     }
   }
 
-  function fallbackCopy(text) {
-    // 구형 브라우저용 대체
-    prompt("아래 내용을 복사하여 사용하세요.", text);
-  }
-</script>
+  function deleteOrder(orderKey) {
+    const table = getCurrentTableState();
+    if (!table) return;
 
+    const order = table.orders[orderKey];
+    if (!order) return;
+
+    // 飲み放題 삭제 시 시간/메모도 정리
+    const item = itemsIndex[order.itemId];
+    if (item && item.isNomihodai) {
+      table.nomihodaiStart = null;
+      table.nomihodaiMemo = "";
+    }
+
+    delete table.orders[orderKey];
+    updateCurrentTableView();
+  }
+
+  function resetCurrentTable() {
+    const table = getCurrentTableState();
+    if (!table) return;
+    table.orders = {};
+    table.nomihodaiStart = null;
+    table.nomihodaiMemo = "";
+    updateCurrentTableView();
+  }
+
+  function updateNomihodaiMemo(value) {
+    const table = getCurrentTableState();
+    if (!table) return;
+    table.nomihodaiMemo = value;
+  }
+
+  function formatTime(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    const hh = String(date.getHours()).padStart(2, "0");
+    const mm = String(date.getMinutes()).padStart(2, "0");
+    return `${y}-${m}-${d} ${hh}:${mm}`;
+  }
+
+  window.onload = init;
+</script>
 </body>
 </html>
