@@ -452,38 +452,52 @@
       align-items: flex-start;
     }
 
-    .soft-input-row,
-    .custom-input-row {
-      display: flex;
-      gap: 4px;
-      margin-top: 4px;
-      width: 100%;
-    }
+    /* 소프트드링크 / 임의금액 입력 줄: 모바일에서 줄바꿈 가능하도록 수정 */
+.soft-input-row,
+.custom-input-row {
+  display: flex;
+  flex-wrap: wrap;     /* → 좁으면 자동 줄바꿈 */
+  gap: 4px;
+  margin-top: 4px;
+  width: 100%;
+}
 
-    .soft-input-row input,
-    .custom-input-row input {
-      flex: 1;
-      padding: 5px 6px;
-      font-size: 0.76rem;
-      border-radius: 8px;
-      border: 1px solid #e5e7eb;
-      background: #f9fafb;
-      font-family: inherit;
-    }
+.soft-input-row input,
+.custom-input-row input {
+  flex: 1 1 100%;      /* → 한 줄에 하나씩도 배치 가능 */
+  min-width: 0;
+  padding: 5px 6px;
+  font-size: 0.76rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-family: inherit;
+}
 
-    .soft-input-row button,
-    .custom-input-row button {
-      padding: 5px 8px;
-      font-size: 0.74rem;
-      border-radius: 999px;
-      border: 1px solid #d1d5db;
-      background: #eef2ff;
-      cursor: pointer;
-      white-space: nowrap;
-      color: #1d4ed8;
-      font-weight: 500;
-      transition: background 0.12s ease, transform 0.05s ease, box-shadow 0.1s ease;
-    }
+/* 버튼이 오른쪽에서 잘리지 않도록 줄바꿈 허용 + 모바일에서는 가로 전체 사용 */
+.soft-input-row button,
+.custom-input-row button {
+  padding: 5px 8px;
+  font-size: 0.74rem;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #eef2ff;
+  cursor: pointer;
+  white-space: nowrap;
+  color: #1d4ed8;
+  font-weight: 500;
+  transition: background 0.12s ease, transform 0.05s ease, box-shadow 0.1s ease;
+  flex: 0 0 auto;
+}
+
+/* 화면이 좁을 때는 버튼을 독립된 줄로 크게 보여주기 */
+@media (max-width: 480px) {
+  .soft-input-row button,
+  .custom-input-row button {
+    width: 100%;
+    text-align: center;
+  }
+}
 
     .soft-input-row button:hover,
     .custom-input-row button:hover {
